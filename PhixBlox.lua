@@ -71,7 +71,7 @@ local Settings = {
 }
 
 local Connections, DrawingObjects, OriginalHitboxes, ESPObjects, FOVCircle = {}, {}, {}, {}, nil
-local AntiAFKActive = false
+
 
 -- Freecam
 local FreecamEnabled = false
@@ -669,7 +669,7 @@ CharacterSection:addSlider('Fly Speed', Settings.Character.FlySpeed, 10, 200, fu
 CharacterSection:addToggle('Noclip', Settings.Character.NoclipEnabled, function(v) Settings.Character.NoclipEnabled = v; SaveConfig() end)
 CharacterSection:addToggle('Infinite Jump', Settings.Character.InfiniteJump, function(v) Settings.Character.InfiniteJump = v; SaveConfig() end)
 
--- Locations (Universal)
+-- Locations
 local playerList = {}
 local function GetPlayerNames()
     playerList = {}
@@ -678,28 +678,113 @@ local function GetPlayerNames()
     end
     return playerList
 end
+GetPlayerNames()
+
+-- helper: split by single char delimiter (string.split tidak ada di Lua standard)
+local function splitStr(s, sep)
+    local parts = {}
+    for part in s:gmatch("([^" .. sep .. "]+)") do
+        table.insert(parts, part)
+    end
+    return parts
+end
+
+-- Cycle player selector state
+local selectedTPIndex = 1
+local selectedTP = playerList[1]
 
 local Locations = Window:addPage('Locations', 5012544693)
-local TeleportSection = Locations:addSection('Teleport To Player')
-local selectedTP = nil
-TeleportSection:addDropdown('Player', GetPlayerNames(), function(v) selectedTP = v end)
-TeleportSection:addButton('Teleport', function()
+local TeleportSection = Locations:addSection('Teleport')
+
+-- Notes label
+TeleportSection:addLabel('Teleport Notes', 'Gunakan koordinat atau pilih player.')
+
+-- Teleport to coordinates
+local coordText = "0,10,0"
+local coordBox = TeleportSection:addTextbox('Teleport Position', coordText, function(v) coordText = v end)
+
+TeleportSection:addButton('Teleport to Coordinates', function()
+    local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild('HumanoidRootPart')
+    if not hrp then return end
+    local parts = splitStr(coordText, ',')
+    local x, y, z = tonumber(parts[1]), tonumber(parts[2]), tonumber(parts[3])
+    if x and y and z then
+        hrp.CFrame = CFrame.new(x, y, z)
+    end
+end)
+
+-- Cycle player selector
+local function RefreshSelector()
+    GetPlayerNames()
+    if #playerList == 0 then
+        selectedTPIndex = 1
+        selectedTP = nil
+        return
+    end
+    selectedTPIndex = math.clamp(selectedTPIndex, 1, #playerList)
+    selectedTP = playerList[selectedTPIndex]
+end
+
+local function UpdateSearchBoxText(searchBoxInner)
+    searchBoxInner.Text = selectedTP or 'None'
+end
+
+-- Select Player: inner TextBox click = cycle, agar tidak bentrok dengan
+-- expand logic library yang intercept root ImageButton MouseButton1Click
+local searchBox = TeleportSection:addTextbox('Select Player', selectedTP or 'None', function() end)
+local searchBoxInner = searchBox.Button.Textbox
+
+searchBoxInner.MouseButton1Down:Connect(function()
+    if #playerList == 0 then return end
+    selectedTPIndex = (selectedTPIndex % #playerList) + 1
+    selectedTP = playerList[selectedTPIndex]
+    UpdateSearchBoxText(searchBoxInner)
+end)
+
+TeleportSection:addTextbox('Manual Search', '', function(v)
+    if v == '' then return end
+    local lower = v:lower()
+    for i, name in ipairs(playerList) do
+        if name:lower():find(lower, 1, true) then
+            selectedTPIndex = i
+            selectedTP = name
+            UpdateSearchBoxText(searchBoxInner)
+            break
+        end
+    end
+end)
+
+TeleportSection:addButton('Refresh Player List', function()
+    RefreshSelector()
+    UpdateSearchBoxText(searchBoxInner)
+end)
+
+TeleportSection:addButton('TP to Player', function()
     if not selectedTP then return end
     local target = Players:FindFirstChild(selectedTP)
     local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild('HumanoidRootPart')
     local thrp = target and target.Character and target.Character:FindFirstChild('HumanoidRootPart')
     if hrp and thrp then hrp.CFrame = thrp.CFrame * CFrame.new(0, 0, 3) end
 end)
-TeleportSection:addButton('Bring Player', function()
+
+TeleportSection:addButton('TP Top Player', function()
     if not selectedTP then return end
     local target = Players:FindFirstChild(selectedTP)
     local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild('HumanoidRootPart')
     local thrp = target and target.Character and target.Character:FindFirstChild('HumanoidRootPart')
     if hrp and thrp then thrp.CFrame = hrp.CFrame * CFrame.new(0, 0, 3) end
 end)
-TeleportSection:addButton('Refresh List', function()
-    GetPlayerNames()
+
+TeleportSection:addButton('Copy My Position', function()
+    local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild('HumanoidRootPart')
+    if not hrp then return end
+    local p = hrp.Position
+    local str = math.floor(p.X)..","..math.floor(p.Y)..","..math.floor(p.Z)
+    coordText = str
+    pcall(function() coordBox.Button.Textbox.Text = str end)
+    pcall(setclipboard, str)
 end)
+
 
 
 local Misc = Window:addPage('Miscellaneous', 5012544693)

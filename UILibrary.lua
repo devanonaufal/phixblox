@@ -797,6 +797,53 @@ do
 		end)
 	end
 	
+	function section:addLabel(title, subtitle)
+		local label = utility:Create("ImageButton", {
+			Name = "Label",
+			Parent = self.container,
+			BackgroundTransparency = 1,
+			BorderSizePixel = 0,
+			Size = UDim2.new(1, 0, 0, subtitle and 44 or 28),
+			ZIndex = 2,
+			Image = "rbxassetid://5028857472",
+			ImageColor3 = themes.DarkContrast,
+			ScaleType = Enum.ScaleType.Slice,
+			SliceCenter = Rect.new(2, 2, 298, 298),
+			AutoButtonColor = false,
+		}, {
+			utility:Create("TextLabel", {
+				Name = "Title",
+				BackgroundTransparency = 1,
+				Position = UDim2.new(0, 10, 0, 6),
+				Size = UDim2.new(1, -20, 0, 14),
+				ZIndex = 3,
+				Font = Enum.Font.GothamSemibold,
+				Text = title,
+				TextColor3 = themes.TextColor,
+				TextSize = 12,
+				TextXAlignment = Enum.TextXAlignment.Left,
+			})
+		})
+		if subtitle then
+			utility:Create("TextLabel", {
+				Name = "Subtitle",
+				Parent = label,
+				BackgroundTransparency = 1,
+				Position = UDim2.new(0, 10, 0, 22),
+				Size = UDim2.new(1, -20, 0, 14),
+				ZIndex = 3,
+				Font = Enum.Font.Gotham,
+				Text = subtitle,
+				TextColor3 = themes.TextColor,
+				TextSize = 11,
+				TextTransparency = 0.4,
+				TextXAlignment = Enum.TextXAlignment.Left,
+			})
+		end
+		table.insert(self.modules, label)
+		return label
+	end
+
 	function section:addButton(title, callback)
 		local button = utility:Create("ImageButton", {
 			Name = "Button",
