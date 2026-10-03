@@ -1340,7 +1340,7 @@ do
 			end
 		}
 		
-		local callback = function(value)
+		local fireCallback = function(value)
 			if callback then
 				callback(value, function(...)
 					self:updateColorPicker(colorpicker, ...)
@@ -1392,7 +1392,7 @@ do
 						hue, sat, brightness = Color3.toHSV(color3)
 						
 						self:updateColorPicker(colorpicker, nil, color3)
-						callback(color3)
+						fireCallback(color3)
 					end
 				end)
 			end
@@ -1417,7 +1417,7 @@ do
 				self:updateColorPicker(colorpicker, nil, {hue, sat, brightness}) -- roblox is literally retarded
 				utility:Tween(canvas.Cursor, {Position = UDim2.new(sat, 0, 1 - brightness, 0)}, 0.1) -- overwrite
 				
-				callback(color3)
+				fireCallback(color3)
 				utility:Wait()
 			end
 		end)
@@ -1438,7 +1438,7 @@ do
 				self:updateColorPicker(colorpicker, nil, {hue, sat, brightness}) -- roblox is literally retarded
 				utility:Tween(tab.Container.Color.Select, {Position = UDim2.new(x, 0, 0, 0)}, 0.1) -- overwrite
 				
-				callback(color3)
+				fireCallback(color3)
 				utility:Wait()
 			end
 		end)
@@ -1447,7 +1447,7 @@ do
 		local button = colorpicker.Button
 		local toggle, debounce, animate
 		
-		lastColor = Color3.fromHSV(hue, sat, brightness)
+		local lastColor = Color3.fromHSV(hue, sat, brightness)
 		animate = function(visible, overwrite)
 			
 			if overwrite then
@@ -1629,7 +1629,7 @@ do
 		local value = default or min
 		local dragging, last
 		
-		local callback = function(value)
+		local fireCallback = function(value)
 			if callback then
 				callback(value, function(...)
 					self:updateSlider(slider, ...)
@@ -1650,7 +1650,7 @@ do
 				utility:Tween(circle, {ImageTransparency = 0}, 0.1)
 				
 				value = self:updateSlider(slider, nil, nil, min, max, value)
-				callback(value)
+				fireCallback(value)
 				
 				utility:Wait()
 			end
@@ -1662,7 +1662,7 @@ do
 		textbox.FocusLost:Connect(function()
 			if not tonumber(textbox.Text) then
 				value = self:updateSlider(slider, nil, default or min, min, max)
-				callback(value)
+				fireCallback(value)
 			end
 		end)
 		
@@ -1673,7 +1673,7 @@ do
 				textbox.Text = text:sub(1, #text - 1)
 			elseif not allowed[text] then	
 				value = self:updateSlider(slider, nil, tonumber(text) or value, min, max)
-				callback(value)
+				fireCallback(value)
 			end
 		end)
 		

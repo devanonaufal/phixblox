@@ -161,27 +161,45 @@ local function InitFreecam()
 end
 
 -- Config save/load
+-- Color3 tidak bisa JSONEncode langsung → serialize ke {r,g,b,__color3=true}
 local ConfigPath = "PhixBlox_Config.json"
+
+local function SerializeSettings(tbl)
+    local out = {}
+    for k, v in pairs(tbl) do
+        if type(v) == "table" then
+            out[k] = SerializeSettings(v)
+        elseif typeof(v) == "Color3" then
+            out[k] = {r = v.R, g = v.G, b = v.B, __color3 = true}
+        else
+            out[k] = v
+        end
+    end
+    return out
+end
+
+local function DeserializeSettings(data, target)
+    for k, v in pairs(data) do
+        if type(v) == "table" and v.__color3 then
+            if target[k] ~= nil then target[k] = Color3.new(v.r, v.g, v.b) end
+        elseif type(v) == "table" and target[k] ~= nil and type(target[k]) == "table" then
+            DeserializeSettings(v, target[k])
+        elseif target[k] ~= nil then
+            target[k] = v
+        end
+    end
+end
+
 local function LoadConfig()
     pcall(function()
         local data = HttpService:JSONDecode(readfile(ConfigPath))
-        for category, settings in pairs(data) do
-            if Settings[category] and type(Settings[category]) == "table" then
-                for k, v in pairs(settings) do
-                    if Settings[category][k] ~= nil then
-                        Settings[category][k] = v
-                    end
-                end
-            elseif Settings[category] ~= nil then
-                Settings[category] = data[category]
-            end
-        end
+        DeserializeSettings(data, Settings)
     end)
 end
 
 local function SaveConfig()
     pcall(function()
-        writefile(ConfigPath, HttpService:JSONEncode(Settings))
+        writefile(ConfigPath, HttpService:JSONEncode(SerializeSettings(Settings)))
     end)
 end
 
@@ -367,11 +385,13 @@ local function UpdateCharacter()
         end
     end
     
-    -- Noclip
-    if Settings.Character.NoclipEnabled then
-        for _, v in ipairs(char:GetDescendants()) do
-            if v:IsA('BasePart') then
+    -- Noclip (restore CanCollide saat dimatikan)
+    for _, v in ipairs(char:GetDescendants()) do
+        if v:IsA('BasePart') then
+            if Settings.Character.NoclipEnabled then
                 v.CanCollide = false
+            elseif v.Name ~= 'HumanoidRootPart' then
+                v.CanCollide = true
             end
         end
     end
@@ -409,13 +429,6 @@ local function UpdateCombat()
         OriginalHitboxes = {}
     end
     
-    -- Spinbot
-    if Settings.Combat.Spinbot and LocalPlayer.Character then
-        local hrp = LocalPlayer.Character:FindFirstChild('HumanoidRootPart')
-        if hrp then
-            hrp.CFrame = hrp.CFrame * CFrame.Angles(0, math.rad(Settings.Combat.SpinbotSpeed), 0)
-        end
-    end
 end
 
 -- Utilities
@@ -453,13 +466,16 @@ local function Rejoin()
     game:GetService("TeleportService"):Teleport(game.PlaceId, LocalPlayer)
 end
 
--- Anti-Kick
+-- Anti-Kick (guard agar hookmetamethod tidak dobel)
+local AntiKickHooked = false
 local function InitAntiKick()
     if not Settings.Miscellaneous.AntiKick then return end
+    if AntiKickHooked then return end
     if not hookmetamethod or not newcclosure or not getnamecallmethod then return end
+    AntiKickHooked = true
     local OldNamecall
     OldNamecall = hookmetamethod(game, "__namecall", newcclosure(function(...)
-        local self, msg = ...
+        local self = ...
         if getnamecallmethod() == "Kick" and self == LocalPlayer and Settings.Miscellaneous.AntiKick then
             return
         end
@@ -697,6 +713,13 @@ table.insert(Connections, RunService.RenderStepped:Connect(function()
         if player ~= LocalPlayer then UpdateESP(player) end
     end
     UpdateAimbot()
+    -- Spinbot di RenderStepped agar tidak di-override physics engine
+    if Settings.Combat.Spinbot and LocalPlayer.Character then
+        local hrp = LocalPlayer.Character:FindFirstChild('HumanoidRootPart')
+        if hrp then
+            hrp.CFrame = hrp.CFrame * CFrame.Angles(0, math.rad(Settings.Combat.SpinbotSpeed), 0)
+        end
+    end
 end))
 
 table.insert(Connections, RunService.Heartbeat:Connect(function()
