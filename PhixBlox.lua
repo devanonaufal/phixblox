@@ -696,8 +696,8 @@ local selectedTP = playerList[1]
 local Locations = Window:addPage('Locations', 5012544693)
 local TeleportSection = Locations:addSection('Teleport')
 
--- Notes label
-TeleportSection:addLabel('Teleport Notes', 'Gunakan koordinat atau pilih player.')
+local _ok, _err = pcall(function()
+TeleportSection:addButton('Teleport Notes: Gunakan koordinat atau pilih player.', function() end)
 
 -- Teleport to coordinates
 local coordText = "0,10,0"
@@ -771,7 +771,8 @@ TeleportSection:addButton('Copy My Position', function()
     pcall(setclipboard, str)
 end)
 
-
+end) -- end pcall Locations
+if not _ok then warn('[PhixBlox] Locations error: ' .. tostring(_err)) end
 
 local Misc = Window:addPage('Miscellaneous', 5012544693)
 local MiscSection = Misc:addSection('Utility')
