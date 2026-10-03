@@ -339,6 +339,7 @@ do
 				inp.Changed:Connect(function()
 					if inp.UserInputState == Enum.UserInputState.End then
 						dragging = false
+						dragStart = nil -- reset di sini bukan di click
 					end
 				end)
 			end
@@ -364,7 +365,6 @@ do
 				local lib = container._library
 				if lib then lib:toggle() end
 			end
-			dragStart = nil
 		end)
 		
 		local lib = setmetatable({

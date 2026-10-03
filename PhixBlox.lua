@@ -698,7 +698,10 @@ SettingsSection:addButton('Destroy Script', DestroyScript)
 for key, color in pairs(Theme) do
     Window:setTheme(key, color)
 end
-Window:SelectPage(Combat, true)
+coroutine.wrap(function()
+    RunService.RenderStepped:Wait()
+    Window:SelectPage(Combat, true)
+end)()
 
 if Drawing then
     FOVCircle = CreateDrawing('Circle', {Thickness = 2, NumSides = 64, Radius = Settings.Combat.AimbotFOV, Filled = false, Visible = Settings.Combat.ShowFOV, Color = Color3.fromRGB(255, 255, 255), Transparency = 1})
