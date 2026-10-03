@@ -592,9 +592,6 @@ local Theme = {
     TextColor     = Color3.fromRGB(170, 250, 255)
 }
 
-for key, color in pairs(Theme) do
-    Window:setTheme(key, color)
-end
 
 local Combat = Window:addPage('Combat', 5012544693)
 local CombatAimbot = Combat:addSection('Aimbot')
@@ -607,13 +604,6 @@ CombatAimbot:addToggle('Hitbox Expander', Settings.Combat.HitboxExpander, functi
 CombatAimbot:addSlider('Hitbox Size', Settings.Combat.HitboxSize, 1, 30, function(v) Settings.Combat.HitboxSize = v; SaveConfig() end)
 CombatAimbot:addToggle('Spinbot', Settings.Combat.Spinbot, function(v) Settings.Combat.Spinbot = v; SaveConfig() end)
 CombatAimbot:addSlider('Spinbot Speed', Settings.Combat.SpinbotSpeed, 1, 50, function(v) Settings.Combat.SpinbotSpeed = v; SaveConfig() end)
-
-coroutine.wrap(function()
-    -- tunggu 2 frame agar AbsoluteSize semua element sudah dihitung Roblox
-    game:GetService('RunService').RenderStepped:Wait()
-    game:GetService('RunService').RenderStepped:Wait()
-    Window:SelectPage(Combat, true)
-end)()
 
 local Visuals = Window:addPage('Visuals', 5012544693)
 local VisualsSection = Visuals:addSection('General')
@@ -703,6 +693,12 @@ local SettingsSection = SettingsPage:addSection('Configuration')
 SettingsSection:addButton('Save Config', SaveConfig)
 SettingsSection:addButton('Load Config', LoadConfig)
 SettingsSection:addButton('Destroy Script', DestroyScript)
+
+-- Apply theme SETELAH semua page/section/element dibuat (pola westbound)
+for key, color in pairs(Theme) do
+    Window:setTheme(key, color)
+end
+Window:SelectPage(Combat, true)
 
 if Drawing then
     FOVCircle = CreateDrawing('Circle', {Thickness = 2, NumSides = 64, Radius = Settings.Combat.AimbotFOV, Filled = false, Visible = Settings.Combat.ShowFOV, Color = Color3.fromRGB(255, 255, 255), Transparency = 1})
