@@ -161,9 +161,31 @@ local function InitFreecam()
     if FreecamEnabled then
         -- Disable fly when freecam starts to avoid conflict
         Settings.Character.FlyEnabled = false
+        -- Freeze character di tempat
+        local char = LocalPlayer.Character
+        if char then
+            local hrp = char:FindFirstChild('HumanoidRootPart')
+            local hum = char:FindFirstChildOfClass('Humanoid')
+            if hrp and not hrp:FindFirstChild('PhixFreezeBV') then
+                local bv = Instance.new('BodyVelocity')
+                bv.Name = 'PhixFreezeBV'
+                bv.Velocity = Vector3.zero
+                bv.MaxForce = Vector3.new(9e9, 9e9, 9e9)
+                bv.Parent = hrp
+            end
+            if hum then hum.WalkSpeed = 0 end
+        end
         StartFreecam()
     else
         StopFreecam()
+        -- Unfreeze character
+        local char = LocalPlayer.Character
+        if char then
+            local hrp = char:FindFirstChild('HumanoidRootPart')
+            local bv = hrp and hrp:FindFirstChild('PhixFreezeBV')
+            if bv then bv:Destroy() end
+        end
+        -- WalkSpeed akan di-restore oleh UpdateCharacter di Heartbeat berikutnya
     end
 end
 
@@ -443,15 +465,28 @@ local function ClickTeleport()
     if not Settings.Miscellaneous.ClickTP or not LocalPlayer.Character then return end
     local hrp = LocalPlayer.Character:FindFirstChild('HumanoidRootPart')
     if not hrp then return end
-    
-    local ray = Camera:ScreenPointToRay(Mouse.X, Mouse.Y)
+    -- Raycast ke posisi mouse
+    local unitRay = Camera:ScreenPointToRay(Mouse.X, Mouse.Y)
     local params = RaycastParams.new()
     params.FilterDescendantsInstances = {LocalPlayer.Character}
     params.FilterType = Enum.RaycastFilterType.Exclude
-    
-    local result = Workspace:Raycast(ray.Origin, ray.Direction * 1000, params)
+    local result = Workspace:Raycast(unitRay.Origin, unitRay.Direction * 1000, params)
     if result then
         hrp.CFrame = CFrame.new(result.Position + Vector3.new(0, 3, 0))
+    end
+end
+
+-- Connect click teleport ke MouseButton1 saat fitur aktif
+local clickTPConn
+local function UpdateClickTPConn()
+    if clickTPConn then clickTPConn:Disconnect(); clickTPConn = nil end
+    if Settings.Miscellaneous.ClickTP then
+        clickTPConn = UserInputService.InputBegan:Connect(function(inp, processed)
+            if processed then return end
+            if inp.UserInputType == Enum.UserInputType.MouseButton1 then
+                ClickTeleport()
+            end
+        end)
     end
 end
 
@@ -684,7 +719,7 @@ MiscSection:addToggle('God Mode', Settings.Miscellaneous.GodMode, function(v)
     end
     SaveConfig()
 end)
-MiscSection:addToggle('Click Teleport', Settings.Miscellaneous.ClickTP, function(v) Settings.Miscellaneous.ClickTP = v; SaveConfig() end)
+MiscSection:addToggle('Click Teleport', Settings.Miscellaneous.ClickTP, function(v) Settings.Miscellaneous.ClickTP = v; UpdateClickTPConn(); SaveConfig() end)
 MiscSection:addToggle('Anti AFK', Settings.Miscellaneous.AntiAFK, function(v) Settings.Miscellaneous.AntiAFK = v; InitAntiAFK(); SaveConfig() end)
 MiscSection:addToggle('Anti Kick', Settings.Miscellaneous.AntiKick, function(v) Settings.Miscellaneous.AntiKick = v; if v then InitAntiKick() end; SaveConfig() end)
 MiscSection:addToggle('Free Cam', false, function(v) FreecamEnabled = v; InitFreecam() end)
@@ -771,10 +806,12 @@ end))
 table.insert(Connections, UserInputService.InputBegan:Connect(function(input, processed)
     if processed then return end
     if input.KeyCode == Enum.KeyCode.RightShift then Window:toggle() end
-    if input.KeyCode == Enum.KeyCode.T and Settings.Miscellaneous.ClickTP then ClickTeleport() end
+    -- InfiniteJump: hook via StateChanged per-character (lebih reliable)
     if input.KeyCode == Enum.KeyCode.Space and Settings.Character.InfiniteJump and LocalPlayer.Character then
-        local humanoid = LocalPlayer.Character:FindFirstChildOfClass('Humanoid')
-        if humanoid then humanoid:ChangeState(Enum.HumanoidStateType.Jumping) end
+        local hum = LocalPlayer.Character:FindFirstChildOfClass('Humanoid')
+        if hum and hum.FloorMaterial ~= Enum.Material.Air then
+            hum:ChangeState(Enum.HumanoidStateType.Jumping)
+        end
     end
 end))
 
