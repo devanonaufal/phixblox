@@ -608,7 +608,7 @@ CombatAimbot:addSlider('Hitbox Size', Settings.Combat.HitboxSize, 1, 30, functio
 CombatAimbot:addToggle('Spinbot', Settings.Combat.Spinbot, function(v) Settings.Combat.Spinbot = v; SaveConfig() end)
 CombatAimbot:addSlider('Spinbot Speed', Settings.Combat.SpinbotSpeed, 1, 50, function(v) Settings.Combat.SpinbotSpeed = v; SaveConfig() end)
 
-Window:SelectPage(Combat, true)
+task.defer(function() Window:SelectPage(Combat, true) end)
 
 local Visuals = Window:addPage('Visuals', 5012544693)
 local VisualsSection = Visuals:addSection('General')
