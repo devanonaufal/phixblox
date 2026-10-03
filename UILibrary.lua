@@ -295,60 +295,76 @@ do
 		utility:InitializeKeybind()
 		utility:DraggingEnabled(container.Main.TopBar, container.Main)
 		
-		-- Logo bulat draggable yang bisa open/close menu
-		local logo = utility:Create("ImageButton", {
-			Name = "PhixBloxLogo",
-			Parent = container,
-			BackgroundColor3 = Color3.fromRGB(10, 20, 30),
-			BackgroundTransparency = 0,
-			BorderSizePixel = 0,
-			Position = UDim2.new(0, 10, 0, 10),
-			Size = UDim2.new(0, 46, 0, 46),
-			ZIndex = 10,
-			AutoButtonColor = false,
-			Image = ""
-		}, {
-			utility:Create("UICorner", {
-				CornerRadius = UDim.new(1, 0)
-			}),
-			utility:Create("UIStroke", {
-				Color = Color3.fromRGB(100, 180, 230),
-				Thickness = 2,
-				ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-			}),
-			utility:Create("TextLabel", {
-				Name = "Label",
-				BackgroundTransparency = 1,
-				Size = UDim2.new(1, 0, 1, 0),
-				ZIndex = 11,
-				Font = Enum.Font.GothamBold,
-				Text = "P",
-				TextColor3 = Color3.fromRGB(170, 250, 255),
-				TextSize = 22
-			})
-		})
+		-- Logo bulat draggable
+		local logo = Instance.new("ImageButton")
+		logo.Name = "PhixBloxLogo"
+		logo.Parent = container
+		logo.BackgroundColor3 = Color3.fromRGB(10, 20, 30)
+		logo.BackgroundTransparency = 0
+		logo.BorderSizePixel = 0
+		logo.Position = UDim2.new(0, 10, 0, 10)
+		logo.Size = UDim2.new(0, 46, 0, 46)
+		logo.ZIndex = 10
+		logo.AutoButtonColor = false
+		logo.Image = ""
 		
-		-- Drag logo
-		utility:DraggingEnabled(logo)
+		local corner = Instance.new("UICorner")
+		corner.CornerRadius = UDim.new(1, 0)
+		corner.Parent = logo
 		
-		-- Click logo → toggle menu
-		local logoDragged = false
-		logo.InputBegan:Connect(function(input)
-			if input.UserInputType == Enum.UserInputType.MouseButton1 then
-				logoDragged = false
+		local stroke = Instance.new("UIStroke")
+		stroke.Color = Color3.fromRGB(100, 180, 230)
+		stroke.Thickness = 2
+		stroke.Parent = logo
+		
+		local label = Instance.new("TextLabel")
+		label.BackgroundTransparency = 1
+		label.Size = UDim2.new(1, 0, 1, 0)
+		label.ZIndex = 11
+		label.Font = Enum.Font.GothamBold
+		label.Text = "P"
+		label.TextColor3 = Color3.fromRGB(170, 250, 255)
+		label.TextSize = 22
+		label.Parent = logo
+		
+		-- Drag logo (track mouse position delta)
+		local dragging, dragStart, startPos = false, nil, nil
+		local DRAG_THRESHOLD = 4 -- pixels
+		
+		logo.InputBegan:Connect(function(inp)
+			if inp.UserInputType == Enum.UserInputType.MouseButton1 then
+				dragging = false
+				dragStart = inp.Position
+				startPos = logo.Position
+				inp.Changed:Connect(function()
+					if inp.UserInputState == Enum.UserInputState.End then
+						dragging = false
+					end
+				end)
 			end
 		end)
-		logo.InputChanged:Connect(function(input)
-			if input.UserInputType == Enum.UserInputType.MouseMovement then
-				logoDragged = true
+		
+		input.InputChanged:Connect(function(inp)
+			if dragStart and inp.UserInputType == Enum.UserInputType.MouseMovement then
+				local delta = inp.Position - dragStart
+				if delta.Magnitude > DRAG_THRESHOLD then
+					dragging = true
+				end
+				if dragging then
+					logo.Position = UDim2.new(
+						startPos.X.Scale, startPos.X.Offset + delta.X,
+						startPos.Y.Scale, startPos.Y.Offset + delta.Y
+					)
+				end
 			end
 		end)
+		
 		logo.MouseButton1Click:Connect(function()
-			if not logoDragged then
-				-- pake library metatable toggle via container reference
+			if not dragging then
 				local lib = container._library
 				if lib then lib:toggle() end
 			end
+			dragStart = nil
 		end)
 		
 		local lib = setmetatable({
@@ -358,9 +374,7 @@ do
 			logo = logo
 		}, library)
 		
-		-- simpan referensi balik agar logo bisa panggil toggle
 		container._library = lib
-		
 		return lib
 	end
 	
