@@ -26,7 +26,7 @@ local Settings = {
         AimbotTarget = "Head",
         AimbotSmooth = 0.1,
         AimbotFOV = 200,
-        WallCheck = true,
+        WallCheck = false,
         ShowFOV = false,
         HitboxExpander = false,
         HitboxSize = 10,
@@ -60,7 +60,7 @@ local Settings = {
         FPSCap = 60,
         ClickTP = false,
         AutoReattach = false,
-        AntiKick = true
+        AntiKick = false
     },
     CameraFOV = 70
 }
