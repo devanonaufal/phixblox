@@ -1965,7 +1965,9 @@ do
 		local size = 0
 		
 		for i, section in pairs(self.sections) do
-			size = size + section.container.Parent.AbsoluteSize.Y + padding
+			local sy = section.container.Parent.AbsoluteSize.Y
+			if sy == 0 then sy = section.container.Parent.Size.Y.Offset end
+			size = size + sy + padding
 		end
 		
 		self.container.CanvasSize = UDim2.new(0, 0, 0, size)
@@ -1983,10 +1985,15 @@ do
 		end
 		
 		local padding = 4
-		local size = (4 * padding) + self.container.Title.AbsoluteSize.Y -- offset
+		-- gunakan AbsoluteSize jika sudah dirender, fallback ke Size.Y.Offset
+		local titleH = self.container.Title.AbsoluteSize.Y
+		if titleH == 0 then titleH = self.container.Title.Size.Y.Offset end
+		local size = (4 * padding) + titleH
 		
 		for i, module in pairs(self.modules) do
-			size = size + module.AbsoluteSize.Y + padding
+			local mh = module.AbsoluteSize.Y
+			if mh == 0 then mh = module.Size.Y.Offset end
+			size = size + mh + padding
 		end
 		
 		if smooth then
