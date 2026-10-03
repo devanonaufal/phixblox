@@ -1,81 +1,157 @@
-# PhixBlox
+<div align="center">
 
-A lightweight, performance-optimized utility and hub script for Roblox. PhixBlox focuses on providing essential features like ESP, Aimbot, and Player modifications with a clean, unobtrusive user interface. The script separates visual rendering from physics loops to eliminate game stuttering.
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:1a1a2e,100:16213e&height=200&section=header&text=PhixBlox&fontSize=80&fontColor=ffffff&fontAlignY=35&desc=Roblox%20Utility%20Hub&descColor=aaaaff&descAlignY=55&animation=fadeIn" width="100%"/>
 
-⚠️ **Disclaimer:** This script is designed for educational/testing purposes. Modifying the game client violates Roblox's Terms of Service and may result in account moderation or bans. Use at your own risk.
+[![GitHub Stars](https://img.shields.io/github/stars/devanonaufal/phixblox?style=for-the-badge&logo=github&color=1a1a2e&labelColor=0d0d1a)](https://github.com/devanonaufal/phixblox/stargazers)
+[![GitHub Forks](https://img.shields.io/github/forks/devanonaufal/phixblox?style=for-the-badge&logo=github&color=16213e&labelColor=0d0d1a)](https://github.com/devanonaufal/phixblox/network)
+[![Version](https://img.shields.io/badge/version-2.0-blue?style=for-the-badge&color=1a1a2e&labelColor=0d0d1a)](https://github.com/devanonaufal/phixblox)
+[![Lua](https://img.shields.io/badge/language-Lua-purple?style=for-the-badge&logo=lua&color=1a1a2e&labelColor=0d0d1a)](https://github.com/devanonaufal/phixblox)
 
----
+> **A premium Roblox utility hub with Westbound-style UI — featuring ESP, Aimbot, Player Mods, and more.**
 
-## 🚀 Features
-
-### 👁️ Visuals
-* **Glow ESP:** Dynamic character highlighting. Includes a wall-check feature that changes the ESP color based on line-of-sight visibility.
-* **Skeleton ESP:** Draws a dynamic skeleton over players (supports both R6 and R15 rigs).
-* **Nametags:** Displays player names, current health, and distance in studs.
-* **Tracers:** Draws line tracers from the bottom of your screen to other players.
-* **Customization:** Fully customizable RGB color pickers for visible, invisible, and skeleton elements.
-
-### 🎯 Aimbot
-* **Aim Assist:** Smooth camera locking onto targets.
-* **Custom Targeting:** Select between *Head*, *HumanoidRootPart*, or *UpperTorso*.
-* **Advanced Checks:** Includes Wallcheck and customizable smoothing/lerp.
-* **FOV Ring:** Visual Field of View circle around your cursor with adjustable radius.
-
-### 🏃 Player Modifications
-* **Movement:** Override and adjust standard WalkSpeed and JumpPower.
-* **Traversal:** Fly Mode (with adjustable speed), Noclip (walk through walls), and Infinite Jump.
-* **Safewalk:** Automatically stops your character from walking off edges.
-
-### ⚔️ Combat & Environment
-* **Hitbox Expander:** Enlarge enemy hitboxes (up to 30 studs) for incredibly easy targeting.
-* **Spinbot / Anti-Aim:** Manipulate your character's root orientation to make yourself harder to hit.
-* **Custom Camera FOV:** Adjust the camera field of view from 70 up to 120.
-
-### 🛠️ Utilities
-* **Click Teleport:** Teleport exactly to where your mouse cursor is pointing.
-* **Server Hopper:** Scrapes the Roblox API to instantly join a new, well-populated public server.
-* **Rejoin Game:** Instantly rejoin the current game server.
-* **Auto Reattach:** Automatically queues the script to re-execute when teleporting between places/rejoining.
-* **Anti-Kick:** Prevents the game from kicking you by blocking kick attempts.
-* **External Hubs Built-in:** Quick-load popular external scripts with one click:
-  * Shadow Hub
-  * Dex Explorer
-  * Infinite Yield
-  * UNC Checker
-* **Config System:** Automatically saves and loads your setup to a local `.json` file.
+</div>
 
 ---
 
-## ⌨️ Default Keybinds
-
-| Action | Key / Input | Notes |
-| :--- | :--- | :--- |
-| **Toggle UI** | `Right Control` | Shows or hides the main PhixBlox menu. |
-| **Click Teleport** | `T` | Requires "Click TP" to be toggled ON in the Utility tab. |
-| **Use Aimbot** | `Hold Right Mouse Button` | Requires "Enable Aimbot" to be toggled ON. |
+> [!WARNING]
+> Script ini dibuat untuk tujuan **edukasi dan testing**. Menggunakan script ini melanggar Roblox Terms of Service dan dapat mengakibatkan ban. **Gunakan dengan risiko sendiri.**
 
 ---
 
-## 📖 Usage / Installation
+## ⚡ Quick Start
 
-1. Copy the loadstring script.
-   ```lua
-   loadstring(game:HttpGet("https://raw.githubusercontent.com/devanonaufal/phixblox/main/PhixBlox.lua"))()
-   ```
-2. Launch a Roblox game.
-3. Open your preferred Roblox executor.
-   * *Note: For all features to work, your executor must support the `Drawing` API, `writefile/readfile`, and `queue_on_teleport` (e.g., Synapse, Krnl, Fluxus, Solara, Xeno, etc).*
-4. Paste the loadstring script into the executor and hit **Execute**.
-5. The UI will pop up automatically. Press `Right Shift` to hide or show it.
+```lua
+loadstring(game:HttpGet("https://raw.githubusercontent.com/devanonaufal/phixblox/main/PhixBlox.lua"))()
+```
+
+> Tekan `Right Shift` untuk toggle UI
 
 ---
 
-## 🧹 Clean Uninstallation
-PhixBlox is built with a strict cleanup function. If you want to stop using the script without restarting your game, navigate to the **Config** tab and click **DESTROY SCRIPT**. 
+## 🗂️ Pages & Features
 
-This will instantly:
-* Disconnect all active loops and input connections.
-* Delete all Drawing elements (Tracers, FOV, Skeletons).
-* Restore all altered player hitboxes to their original sizes.
-* Reset your character's WalkSpeed, JumpPower, and Camera FOV to default.
-* Remove the GUI entirely.
+<details>
+<summary><b>🎯 Combat</b></summary>
+
+| Feature | Description |
+|:--------|:------------|
+| **Aimbot** | Smooth camera lock-on ke target terdekat |
+| **Wall Check** | Hanya aim ke target yang terlihat |
+| **FOV Circle** | Visual radius aimbot di sekitar cursor |
+| **Smoothness** | Adjust kecepatan lock-on |
+| **Hitbox Expander** | Perbesar hitbox musuh (1–30 studs) |
+| **Spinbot** | Anti-aim / spin character |
+
+</details>
+
+<details>
+<summary><b>👁️ Visuals</b></summary>
+
+| Feature | Description |
+|:--------|:------------|
+| **Glow ESP** | Highlight seluruh karakter musuh |
+| **Nametags** | Tampilkan nama player |
+| **Tracers** | Garis tracer dari bawah layar ke musuh |
+| **Visible Color** | Warna ESP saat terlihat (wall check) |
+| **Hidden Color** | Warna ESP saat behind wall |
+
+</details>
+
+<details>
+<summary><b>🏃 Character</b></summary>
+
+| Feature | Description |
+|:--------|:------------|
+| **WalkSpeed** | Override kecepatan jalan (16–250) |
+| **JumpPower** | Override kekuatan lompat (50–500) |
+| **Fly Mode** | Terbang dengan WASD + Space/Shift |
+| **Fly Speed** | Atur kecepatan terbang |
+| **Noclip** | Melewati dinding |
+| **Infinite Jump** | Lompat tanpa batas (Space) |
+
+</details>
+
+<details>
+<summary><b>📍 Locations</b></summary>
+
+| Feature | Description |
+|:--------|:------------|
+| **Spawn** | Teleport ke spawn point |
+| **Random Player** | Teleport ke player random |
+
+</details>
+
+<details>
+<summary><b>⚙️ Miscellaneous</b></summary>
+
+| Feature | Description |
+|:--------|:------------|
+| **Full Bright** | Hapus gelap dari map |
+| **Camera FOV** | Adjust field of view kamera (70–120) |
+| **FPS Cap** | Limit framerate (60–360) |
+| **Click Teleport** | Teleport ke titik yang di-klik (T) |
+| **Anti AFK** | Cegah kick karena AFK |
+| **Anti Kick** | Block kick attempts dari server |
+| **Server Hop** | Pindah ke server kosong |
+| **Rejoin** | Rejoin server saat ini |
+
+</details>
+
+<details>
+<summary><b>🔧 Settings</b></summary>
+
+| Feature | Description |
+|:--------|:------------|
+| **Save Config** | Simpan settings ke file JSON |
+| **Load Config** | Muat settings dari file |
+| **Destroy Script** | Bersihkan semua modifikasi & hapus UI |
+
+</details>
+
+---
+
+## ⌨️ Keybinds
+
+| Key | Action |
+|:----|:-------|
+| `Right Shift` | Toggle UI (show/hide) |
+| `Hold RMB` | Activate Aimbot |
+| `T` | Click Teleport *(harus diaktifkan dulu)* |
+| `WASD` | Fly direction |
+| `Space / Left Shift` | Fly up / down |
+
+---
+
+## 📋 Requirements
+
+> [!IMPORTANT]
+> Executor Anda harus support fitur berikut agar semua berfungsi:
+> - `Drawing` API — untuk ESP Tracers & FOV Circle
+> - `writefile` / `readfile` — untuk Config save/load
+> - `hookmetamethod` — untuk Anti-Kick
+> - `queue_on_teleport` — untuk Auto Reattach
+>
+> **Supported executors:** Synapse X, KRNL, Fluxus, Solara, Xeno, dll.
+
+---
+
+## 🧹 Uninstall
+
+Pergi ke tab **Settings** → klik **Destroy Script**.
+
+Script akan:
+- ✅ Disconnect semua loops & connections
+- ✅ Hapus semua Drawing objects (Tracers, FOV, etc.)
+- ✅ Restore hitbox musuh ke ukuran asli
+- ✅ Reset WalkSpeed, JumpPower, Camera FOV
+- ✅ Hapus GUI sepenuhnya
+
+---
+
+<div align="center">
+
+**Made with ❤️ by [devanonaufal](https://github.com/devanonaufal)**
+
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:16213e,100:1a1a2e&height=100&section=footer" width="100%"/>
+
+</div>
