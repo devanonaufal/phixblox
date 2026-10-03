@@ -725,22 +725,10 @@ local function RefreshSelector()
     selectedTP = playerList[selectedTPIndex]
 end
 
-local function UpdateSearchBoxText(searchBoxInner)
-    searchBoxInner.Text = selectedTP or 'None'
-end
-
--- Select Player: inner TextBox click = cycle, agar tidak bentrok dengan
--- expand logic library yang intercept root ImageButton MouseButton1Click
-local searchBox = TeleportSection:addTextbox('Select Player', selectedTP or 'None', function() end)
-local searchBoxInner = searchBox.Button.Textbox
-
-searchBoxInner.MouseButton1Down:Connect(function()
-    if #playerList == 0 then return end
-    selectedTPIndex = (selectedTPIndex % #playerList) + 1
-    selectedTP = playerList[selectedTPIndex]
-    UpdateSearchBoxText(searchBoxInner)
+-- Select Player via dropdown (reliable di semua executor, tidak ada direct child access)
+TeleportSection:addDropdown('Select Player', playerList, function(v)
+    selectedTP = v
 end)
-
 TeleportSection:addTextbox('Manual Search', '', function(v)
     if v == '' then return end
     local lower = v:lower()
@@ -748,7 +736,6 @@ TeleportSection:addTextbox('Manual Search', '', function(v)
         if name:lower():find(lower, 1, true) then
             selectedTPIndex = i
             selectedTP = name
-            UpdateSearchBoxText(searchBoxInner)
             break
         end
     end
@@ -756,7 +743,6 @@ end)
 
 TeleportSection:addButton('Refresh Player List', function()
     RefreshSelector()
-    UpdateSearchBoxText(searchBoxInner)
 end)
 
 TeleportSection:addButton('TP to Player', function()
