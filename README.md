@@ -94,6 +94,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/devanonaufal/phixblox
 | **Anti Kick** | Block kick attempts dari server |
 | **Server Hop** | Pindah ke server kosong |
 | **Rejoin** | Rejoin server saat ini |
+| **Free Cam** | Kamera bebas lepas dari karakter (WASD + Mouse) |
 
 </details>
 
@@ -117,8 +118,11 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/devanonaufal/phixblox
 | `Right Shift` | Toggle UI (show/hide) |
 | `Hold RMB` | Activate Aimbot |
 | `T` | Click Teleport *(harus diaktifkan dulu)* |
-| `WASD` | Fly direction |
+| `WASD` | Fly direction / Free Cam move |
 | `Space / Left Shift` | Fly up / down |
+| `E / Q` | Free Cam naik / turun |
+| `Scroll Wheel` | Free Cam zoom (FOV) |
+| `Left Shift` (Free Cam) | Mode lambat 0.25x |
 
 ---
 
