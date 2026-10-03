@@ -322,8 +322,6 @@ local function UpdateCombat()
             hrp.CFrame = hrp.CFrame * CFrame.Angles(0, math.rad(Settings.Combat.SpinbotSpeed), 0)
         end
     end
-    
-    Camera.FieldOfView = Settings.CameraFOV
 end
 
 -- Utilities
@@ -335,7 +333,7 @@ local function ClickTeleport()
     local ray = Camera:ScreenPointToRay(Mouse.X, Mouse.Y)
     local params = RaycastParams.new()
     params.FilterDescendantsInstances = {LocalPlayer.Character}
-    params.FilterType = Enum.RaycastFilterType.Blacklist
+    params.FilterType = Enum.RaycastFilterType.Exclude
     
     local result = Workspace:Raycast(ray.Origin, ray.Direction * 1000, params)
     if result then
@@ -364,6 +362,7 @@ end
 -- Anti-Kick
 local function InitAntiKick()
     if not Settings.Miscellaneous.AntiKick then return end
+    if not hookmetamethod or not newcclosure or not getnamecallmethod then return end
     local OldNamecall
     OldNamecall = hookmetamethod(game, "__namecall", newcclosure(function(...)
         local self, msg = ...
@@ -506,6 +505,7 @@ LocationsSection:addButton('Random Player', function()
     for _, p in ipairs(Players:GetPlayers()) do
         if p ~= LocalPlayer and p.Character then table.insert(list, p) end
     end
+    if #list == 0 then return end
     local target = list[math.random(#list)]
     local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild('HumanoidRootPart')
     local thrp = target and target.Character and target.Character:FindFirstChild('HumanoidRootPart')
