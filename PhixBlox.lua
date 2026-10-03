@@ -1,4 +1,4 @@
-﻿--[[
+--[[
     PhixBlox v2.0 - Complete Roblox Utility Hub
     Structure: Westbound Style (6 Pages)
     Pages: Combat, Visuals, Character, Locations, Miscellaneous, Settings
@@ -472,6 +472,8 @@ CombatAimbot:addSlider('Hitbox Size', Settings.Combat.HitboxSize, 1, 30, functio
 CombatAimbot:addToggle('Spinbot', Settings.Combat.Spinbot, function(v) Settings.Combat.Spinbot = v; SaveConfig() end)
 CombatAimbot:addSlider('Spinbot Speed', Settings.Combat.SpinbotSpeed, 1, 50, function(v) Settings.Combat.SpinbotSpeed = v; SaveConfig() end)
 
+Window:SelectPage(Combat, true)
+
 local Visuals = Window:addPage('Visuals', 5012544693)
 local VisualsSection = Visuals:addSection('General')
 VisualsSection:addToggle('Enabled', Settings.Visuals.Enabled, function(v) Settings.Visuals.Enabled = v; SaveConfig() end)
@@ -514,7 +516,7 @@ local Misc = Window:addPage('Miscellaneous', 5012544693)
 local MiscSection = Misc:addSection('Utility')
 MiscSection:addToggle('Full Bright', Settings.Miscellaneous.FullBright, function(v) Settings.Miscellaneous.FullBright = v; ToggleFullBright(v); SaveConfig() end)
 MiscSection:addSlider('Camera FOV', Settings.CameraFOV, 70, 120, function(v) Settings.CameraFOV = v; Camera.FieldOfView = v; SaveConfig() end)
-MiscSection:addSlider('FPS Cap', Settings.Miscellaneous.FPSCap, 60, 360, function(v) Settings.Miscellaneous.FPSCap = v; setfpscap(v); SaveConfig() end)
+MiscSection:addSlider('FPS Cap', Settings.Miscellaneous.FPSCap, 60, 360, function(v) Settings.Miscellaneous.FPSCap = v; pcall(setfpscap, v); SaveConfig() end)
 MiscSection:addToggle('Click Teleport', Settings.Miscellaneous.ClickTP, function(v) Settings.Miscellaneous.ClickTP = v; SaveConfig() end)
 MiscSection:addToggle('Anti AFK', Settings.Miscellaneous.AntiAFK, function(v) Settings.Miscellaneous.AntiAFK = v; InitAntiAFK(); SaveConfig() end)
 MiscSection:addToggle('Anti Kick', Settings.Miscellaneous.AntiKick, function(v) Settings.Miscellaneous.AntiKick = v; if v then InitAntiKick() end; SaveConfig() end)
