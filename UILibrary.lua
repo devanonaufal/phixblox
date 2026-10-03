@@ -280,13 +280,64 @@ do
 						AnchorPoint = Vector2.new(0, 0.5),
 						BackgroundTransparency = 1,
 						Position = UDim2.new(0, 12, 0, 19),
-						Size = UDim2.new(1, -46, 0, 16),
+						Size = UDim2.new(1, -100, 0, 16),
 						ZIndex = 5,
 						Font = Enum.Font.GothamBold,
 						Text = title,
 						TextColor3 = themes.TextColor,
 						TextSize = 14,
 						TextXAlignment = Enum.TextXAlignment.Left
+					}),
+					utility:Create("Frame", {
+						Name = "Controls",
+						AnchorPoint = Vector2.new(1, 0.5),
+						BackgroundTransparency = 1,
+						Position = UDim2.new(1, -6, 0.5, 0),
+						Size = UDim2.new(0, 84, 0, 22),
+						ZIndex = 6,
+					}, {
+						utility:Create("TextButton", {
+							Name = "Minimize",
+							AnchorPoint = Vector2.new(0, 0.5),
+							BackgroundColor3 = Color3.fromRGB(60, 60, 60),
+							BorderSizePixel = 0,
+							Position = UDim2.new(0, 0, 0.5, 0),
+							Size = UDim2.new(0, 24, 0, 18),
+							ZIndex = 6,
+							Font = Enum.Font.GothamBold,
+							Text = "−",
+							TextColor3 = Color3.fromRGB(220, 220, 220),
+							TextSize = 14,
+							AutoButtonColor = false,
+						}),
+						utility:Create("TextButton", {
+							Name = "Maximize",
+							AnchorPoint = Vector2.new(0, 0.5),
+							BackgroundColor3 = Color3.fromRGB(60, 60, 60),
+							BorderSizePixel = 0,
+							Position = UDim2.new(0, 30, 0.5, 0),
+							Size = UDim2.new(0, 24, 0, 18),
+							ZIndex = 6,
+							Font = Enum.Font.Gotham,
+							Text = "□",
+							TextColor3 = Color3.fromRGB(220, 220, 220),
+							TextSize = 12,
+							AutoButtonColor = false,
+						}),
+						utility:Create("TextButton", {
+							Name = "Close",
+							AnchorPoint = Vector2.new(0, 0.5),
+							BackgroundColor3 = Color3.fromRGB(196, 43, 28),
+							BorderSizePixel = 0,
+							Position = UDim2.new(0, 60, 0.5, 0),
+							Size = UDim2.new(0, 24, 0, 18),
+							ZIndex = 6,
+							Font = Enum.Font.GothamBold,
+							Text = "×",
+							TextColor3 = Color3.fromRGB(255, 255, 255),
+							TextSize = 14,
+							AutoButtonColor = false,
+						}),
 					})
 				})
 			})
@@ -294,6 +345,35 @@ do
 		
 		utility:InitializeKeybind()
 		utility:DraggingEnabled(container.Main.TopBar, container.Main)
+		
+		-- Wire tombol controls (minimize, maximize, close)
+		local controls = container.Main.TopBar.Controls
+		local mainFrame = container.Main
+		local maximized, prevSize, prevPos = false, nil, nil
+		
+		controls.Minimize.MouseButton1Click:Connect(function()
+			local lib = container._library
+			if lib then lib:toggle() end
+		end)
+		
+		controls.Maximize.MouseButton1Click:Connect(function()
+			if maximized then
+				utility:Tween(mainFrame, {Size = prevSize, Position = prevPos}, 0.2)
+				maximized = false
+			else
+				prevSize = mainFrame.Size
+				prevPos = mainFrame.Position
+				utility:Tween(mainFrame, {
+					Size = UDim2.new(1, -20, 1, -20),
+					Position = UDim2.new(0, 10, 0, 10)
+				}, 0.2)
+				maximized = true
+			end
+		end)
+		
+		controls.Close.MouseButton1Click:Connect(function()
+			container:Destroy()
+		end)
 		
 		-- Logo bulat draggable
 		local logo = Instance.new("ImageButton")
