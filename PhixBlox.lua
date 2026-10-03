@@ -698,9 +698,35 @@ SettingsSection:addButton('Destroy Script', DestroyScript)
 for key, color in pairs(Theme) do
     Window:setTheme(key, color)
 end
+-- Tampilkan halaman pertama secara langsung tanpa animasi
+-- (SelectPage terlalu banyak task.wait yang tidak reliable di executor)
 coroutine.wrap(function()
-    task.wait(0.2)
-    Window:SelectPage(Combat, true)
+    task.wait(0.3)
+    -- highlight button
+    local btn = Combat.button
+    btn.Title.TextTransparency = 0
+    btn.Title.Font = Enum.Font.GothamSemibold
+    if btn:FindFirstChild("Icon") then btn.Icon.ImageTransparency = 0 end
+    -- show page container
+    Combat.container.Visible = true
+    Window.focusedPage = Combat
+    -- resize each section
+    for _, sec in pairs(Combat.sections) do
+        sec.container.Parent.ImageTransparency = 0
+        local padding = 4
+        local titleH = sec.container.Title.Size.Y.Offset
+        local size = (4 * padding) + titleH
+        for _, mod in pairs(sec.modules) do
+            size = size + mod.Size.Y.Offset + padding
+        end
+        sec.container.Parent.Size = UDim2.new(1, -10, 0, size)
+    end
+    -- resize page canvas
+    local totalSize = 0
+    for _, sec in pairs(Combat.sections) do
+        totalSize = totalSize + sec.container.Parent.Size.Y.Offset + 10
+    end
+    Combat.container.CanvasSize = UDim2.new(0, 0, 0, totalSize)
 end)()
 
 if Drawing then
