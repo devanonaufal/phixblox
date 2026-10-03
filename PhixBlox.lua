@@ -68,6 +68,94 @@ local Settings = {
 local Connections, DrawingObjects, OriginalHitboxes, ESPObjects, FOVCircle = {}, {}, {}, {}, nil
 local AntiAFKActive = false
 
+-- Freecam
+local FreecamEnabled = false
+local function InitFreecam()
+    local ContextActionService = game:GetService('ContextActionService')
+    local RunService = game:GetService('RunService')
+    local pi, abs, clamp, exp, rad, sign, sqrt, tan = math.pi, math.abs, math.clamp, math.exp, math.rad, math.sign, math.sqrt, math.tan
+
+    local NAV_GAIN, PAN_GAIN, FOV_GAIN = Vector3.new(1,1,1)*64, Vector2.new(0.75,1)*8, 300
+    local PITCH_LIMIT = rad(90)
+    local VEL_STIFFNESS, PAN_STIFFNESS, FOV_STIFFNESS = 1.5, 1.0, 4.0
+
+    local Spring = {}
+    Spring.__index = Spring
+    function Spring.new(freq, pos)
+        local s = setmetatable({}, Spring)
+        s.f = freq; s.p = pos; s.v = pos*0; return s
+    end
+    function Spring:Update(dt, goal)
+        local f = self.f*2*pi
+        local offset = goal - self.p
+        local decay = exp(-f*dt)
+        local p1 = goal + (self.v*dt - offset*(f*dt+1))*decay
+        self.v = (f*dt*(offset*f - self.v) + self.v)*decay
+        self.p = p1; return p1
+    end
+    function Spring:Reset(pos) self.p = pos; self.v = pos*0 end
+
+    local camPos, camRot, camFov = Vector3.new(), Vector2.new(), 70
+    local velS = Spring.new(VEL_STIFFNESS, Vector3.new())
+    local panS = Spring.new(PAN_STIFFNESS, Vector2.new())
+    local fovS = Spring.new(FOV_STIFFNESS, 0)
+    local mouseDelta, mouseWheel = Vector2.new(), 0
+
+    local function StepFreecam(dt)
+        -- pan from mouse
+        local pan = panS:Update(dt, mouseDelta * (pi/64))
+        mouseDelta = Vector2.new()
+        -- fov from wheel
+        local fov = fovS:Update(dt, mouseWheel)
+        mouseWheel = 0
+        -- nav from keyboard
+        local kv = Vector3.new(
+            (UserInputService:IsKeyDown(Enum.KeyCode.D) and 1 or 0) - (UserInputService:IsKeyDown(Enum.KeyCode.A) and 1 or 0),
+            (UserInputService:IsKeyDown(Enum.KeyCode.E) and 1 or 0) - (UserInputService:IsKeyDown(Enum.KeyCode.Q) and 1 or 0),
+            (UserInputService:IsKeyDown(Enum.KeyCode.S) and 1 or 0) - (UserInputService:IsKeyDown(Enum.KeyCode.W) and 1 or 0)
+        )
+        local shift = UserInputService:IsKeyDown(Enum.KeyCode.LeftShift)
+        local vel = velS:Update(dt, kv * (shift and 0.25 or 1))
+        local zf = sqrt(tan(rad(70/2))/tan(rad(camFov/2)))
+        camFov = clamp(camFov + fov * FOV_GAIN * (dt/zf), 1, 120)
+        camRot = camRot + pan * PAN_GAIN * (dt/zf)
+        camRot = Vector2.new(clamp(camRot.x, -PITCH_LIMIT, PITCH_LIMIT), camRot.y % (2*pi))
+        local cf = CFrame.new(camPos) * CFrame.fromOrientation(camRot.x, camRot.y, 0) * CFrame.new(vel * NAV_GAIN * dt)
+        camPos = cf.p
+        Camera.CFrame = cf
+        Camera.Focus = cf * CFrame.new(0, 0, -50)
+        Camera.FieldOfView = camFov
+    end
+
+    local mousePanConn, mouseWheelConn
+
+    local function StartFreecam()
+        local cf = Camera.CFrame
+        camRot = Vector2.new(cf:ToEulerAnglesYXZ())
+        camPos = cf.p
+        camFov = Camera.FieldOfView
+        velS:Reset(Vector3.new()); panS:Reset(Vector2.new()); fovS:Reset(0)
+        Camera.CameraType = Enum.CameraType.Scriptable
+        RunService:BindToRenderStep('PhixFreecam', Enum.RenderPriority.Camera.Value, StepFreecam)
+        mousePanConn = UserInputService.InputChanged:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseMovement then
+                mouseDelta = Vector2.new(-input.Delta.Y, -input.Delta.X)
+            elseif input.UserInputType == Enum.UserInputType.MouseWheel then
+                mouseWheel = -input.Position.Z
+            end
+        end)
+    end
+
+    local function StopFreecam()
+        RunService:UnbindFromRenderStep('PhixFreecam')
+        Camera.CameraType = Enum.CameraType.Custom
+        Camera.FieldOfView = Settings.CameraFOV
+        if mousePanConn then mousePanConn:Disconnect() end
+    end
+
+    if FreecamEnabled then StartFreecam() else StopFreecam() end
+end
+
 -- Config save/load
 local ConfigPath = "PhixBlox_Config.json"
 local function LoadConfig()
@@ -533,6 +621,7 @@ MiscSection:addSlider('FPS Cap', Settings.Miscellaneous.FPSCap, 60, 360, functio
 MiscSection:addToggle('Click Teleport', Settings.Miscellaneous.ClickTP, function(v) Settings.Miscellaneous.ClickTP = v; SaveConfig() end)
 MiscSection:addToggle('Anti AFK', Settings.Miscellaneous.AntiAFK, function(v) Settings.Miscellaneous.AntiAFK = v; InitAntiAFK(); SaveConfig() end)
 MiscSection:addToggle('Anti Kick', Settings.Miscellaneous.AntiKick, function(v) Settings.Miscellaneous.AntiKick = v; if v then InitAntiKick() end; SaveConfig() end)
+MiscSection:addToggle('Free Cam', false, function(v) FreecamEnabled = v; InitFreecam() end)
 MiscSection:addButton('Server Hop', ServerHop)
 MiscSection:addButton('Rejoin', Rejoin)
 
