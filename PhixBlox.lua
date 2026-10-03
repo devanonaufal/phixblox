@@ -1,5 +1,5 @@
 --[[
-    PhixBlox v2.0 - Complete Roblox Utility Hub
+    PhixBlox - Complete Roblox Utility Hub
     Structure: Westbound Style (6 Pages)
     Pages: Combat, Visuals, Character, Locations, Miscellaneous, Settings
 ]]
@@ -623,7 +623,7 @@ local function DestroyScript()
 end
 
 -- UI BUILD (6 Pages: Combat, Visuals, Character, Locations, Miscellaneous, Settings)
-local ok2, Window = pcall(function() return Library.new('PhixBlox v2.0') end)
+local ok2, Window = pcall(function() return Library.new('PhixBlox') end)
 if not ok2 then
     warn("[PhixBlox] Window create error: " .. tostring(Window))
     return
