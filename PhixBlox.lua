@@ -47,8 +47,7 @@ local Settings = {
         FlyEnabled = false,
         FlySpeed = 50,
         NoclipEnabled = false,
-        InfiniteJump = false,
-        AntiRagdoll = false
+        InfiniteJump = false
     },
     Miscellaneous = {
         FullBright = false,
@@ -152,7 +151,13 @@ local function InitFreecam()
         if mousePanConn then mousePanConn:Disconnect() end
     end
 
-    if FreecamEnabled then StartFreecam() else StopFreecam() end
+    if FreecamEnabled then
+        -- Disable fly when freecam starts to avoid conflict
+        Settings.Character.FlyEnabled = false
+        StartFreecam()
+    else
+        StopFreecam()
+    end
 end
 
 -- Config save/load
@@ -194,11 +199,13 @@ end
 -- Visibility check
 local function IsVisible(target)
     if not Settings.Combat.WallCheck then return true end
+    local params = RaycastParams.new()
+    params.FilterDescendantsInstances = {LocalPlayer.Character, target.Parent}
+    params.FilterType = Enum.RaycastFilterType.Exclude
     local origin = Camera.CFrame.Position
     local direction = (target.Position - origin)
-    local ray = Ray.new(origin, direction)
-    local part = Workspace:FindPartOnRayWithIgnoreList(ray, {LocalPlayer.Character, target.Parent})
-    return part == nil or part:IsDescendantOf(target.Parent)
+    local result = Workspace:Raycast(origin, direction, params)
+    return result == nil or result.Instance:IsDescendantOf(target.Parent)
 end
 
 local function GetCharacterParts(char)
@@ -479,15 +486,21 @@ local function ToggleFullBright(enabled)
     end
 end
 
--- Anti AFK (Fixed: prevent duplicate connections)
+-- Anti AFK
+local AntiAFKConn = nil
 local function InitAntiAFK()
-    if Settings.Miscellaneous.AntiAFK and not AntiAFKActive then
-        AntiAFKActive = true
-        local VirtualUser = game:GetService("VirtualUser")
-        table.insert(Connections, LocalPlayer.Idled:Connect(function()
+    if Settings.Miscellaneous.AntiAFK then
+        if AntiAFKConn then return end -- already active
+        local VirtualUser = game:GetService('VirtualUser')
+        AntiAFKConn = LocalPlayer.Idled:Connect(function()
             VirtualUser:CaptureController()
             VirtualUser:ClickButton2(Vector2.new())
-        end))
+        end)
+    else
+        if AntiAFKConn then
+            AntiAFKConn:Disconnect()
+            AntiAFKConn = nil
+        end
     end
 end
 
@@ -538,8 +551,16 @@ local function DestroyScript()
     end
     
     Camera.FieldOfView = 70
+    Workspace.Gravity = 196.2
     ToggleFullBright(false)
-    
+    -- Reset God Mode
+    if LocalPlayer.Character then
+        local hum = LocalPlayer.Character:FindFirstChildOfClass('Humanoid')
+        if hum then hum.MaxHealth = 100; hum.Health = 100 end
+    end
+    -- Stop Freecam if active
+    FreecamEnabled = false; pcall(function() RunService:UnbindFromRenderStep('PhixFreecam') end)
+    Camera.CameraType = Enum.CameraType.Custom
     print('PhixBlox destroyed successfully')
 end
 
