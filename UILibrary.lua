@@ -446,6 +446,7 @@ do
 	function library:setTheme(theme, color3)
 		themes[theme] = color3
 		
+		if not objects[theme] then return end
 		for property, objects in pairs(objects[theme]) do
 			for i, object in pairs(objects) do
 				if not object.Parent or (object.Name == "Button" and object.Parent.Name == "ColorPicker") then
