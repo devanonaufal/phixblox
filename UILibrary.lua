@@ -327,43 +327,25 @@ do
 		label.TextSize = 22
 		label.Parent = logo
 		
-		-- Drag logo (track mouse position delta)
-		local dragging, dragStart, startPos = false, nil, nil
-		local DRAG_THRESHOLD = 4 -- pixels
+		-- Drag logo pakai sistem yang sama dengan main window (utility:DraggingEnabled)
+		utility:DraggingEnabled(logo)
 		
+		-- Bedakan click vs drag: simpan posisi saat mousedown, bandingkan saat click
+		local clickStartPos
 		logo.InputBegan:Connect(function(inp)
 			if inp.UserInputType == Enum.UserInputType.MouseButton1 then
-				dragging = false
-				dragStart = inp.Position
-				startPos = logo.Position
-				inp.Changed:Connect(function()
-					if inp.UserInputState == Enum.UserInputState.End then
-						dragging = false
-						dragStart = nil -- reset di sini bukan di click
-					end
-				end)
+				clickStartPos = logo.Position
 			end
 		end)
-		
-		input.InputChanged:Connect(function(inp)
-			if dragStart and inp.UserInputType == Enum.UserInputType.MouseMovement then
-				local delta = inp.Position - dragStart
-				if delta.Magnitude > DRAG_THRESHOLD then
-					dragging = true
-				end
-				if dragging then
-					logo.Position = UDim2.new(
-						startPos.X.Scale, startPos.X.Offset + delta.X,
-						startPos.Y.Scale, startPos.Y.Offset + delta.Y
-					)
-				end
-			end
-		end)
-		
 		logo.MouseButton1Click:Connect(function()
-			if not dragging then
-				local lib = container._library
-				if lib then lib:toggle() end
+			-- Jika posisi logo tidak berubah jauh = click, bukan drag
+			if clickStartPos then
+				local dx = math.abs(logo.Position.X.Offset - clickStartPos.X.Offset)
+				local dy = math.abs(logo.Position.Y.Offset - clickStartPos.Y.Offset)
+				if dx < 5 and dy < 5 then
+					local lib = container._library
+					if lib then lib:toggle() end
+				end
 			end
 		end)
 		
