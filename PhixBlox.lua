@@ -1,4 +1,4 @@
---[[
+﻿--[[
     PhixBlox v2.0 - Complete Roblox Utility Hub
     Structure: Westbound Style (6 Pages)
     Pages: Combat, Visuals, Character, Locations, Miscellaneous, Settings
@@ -458,124 +458,107 @@ local function DestroyScript()
 end
 
 -- UI BUILD (6 Pages: Combat, Visuals, Character, Locations, Miscellaneous, Settings)
-local Window = Library.new(" PhixBlox v2.0\)
+local Window = Library.new('PhixBlox v2.0')
 
--- COMBAT PAGE
-local CombatPage = Window:addPage(\Combat\, 5012544693)
-local Combat_Aimbot = CombatPage:addSection(\Aimbot\)
-local Combat_Other = CombatPage:addSection(\Other\)
+local Combat = Window:addPage('Combat', 5012544693)
+local CombatAimbot = Combat:addSection('Aimbot')
+CombatAimbot:addToggle('Enabled', Settings.Combat.AimbotEnabled, function(v) Settings.Combat.AimbotEnabled = v; SaveConfig() end)
+CombatAimbot:addToggle('Wall Check', Settings.Combat.WallCheck, function(v) Settings.Combat.WallCheck = v; SaveConfig() end)
+CombatAimbot:addToggle('Show FOV', Settings.Combat.ShowFOV, function(v) Settings.Combat.ShowFOV = v; if FOVCircle then FOVCircle.Visible = v end; SaveConfig() end)
+CombatAimbot:addSlider('Smooth', Settings.Combat.AimbotSmooth * 100, 0, 100, function(v) Settings.Combat.AimbotSmooth = v / 100; SaveConfig() end)
+CombatAimbot:addSlider('FOV', Settings.Combat.AimbotFOV, 50, 500, function(v) Settings.Combat.AimbotFOV = v; if FOVCircle then FOVCircle.Radius = v end; SaveConfig() end)
+CombatAimbot:addToggle('Hitbox Expander', Settings.Combat.HitboxExpander, function(v) Settings.Combat.HitboxExpander = v; SaveConfig() end)
+CombatAimbot:addSlider('Hitbox Size', Settings.Combat.HitboxSize, 1, 30, function(v) Settings.Combat.HitboxSize = v; SaveConfig() end)
+CombatAimbot:addToggle('Spinbot', Settings.Combat.Spinbot, function(v) Settings.Combat.Spinbot = v; SaveConfig() end)
+CombatAimbot:addSlider('Spinbot Speed', Settings.Combat.SpinbotSpeed, 1, 50, function(v) Settings.Combat.SpinbotSpeed = v; SaveConfig() end)
 
-Combat_Aimbot:addToggle(\Enabled\, Settings.Combat.AimbotEnabled, function(v) Settings.Combat.AimbotEnabled = v; SaveConfig() end)
-Combat_Aimbot:addToggle(\Wall Check\, Settings.Combat.WallCheck, function(v) Settings.Combat.WallCheck = v; SaveConfig() end)
-Combat_Aimbot:addToggle(\Show FOV Circle\, Settings.Combat.ShowFOV, function(v) Settings.Combat.ShowFOV = v; if FOVCircle then FOVCircle.Visible = v end; SaveConfig() end)
-Combat_Aimbot:addSlider(\Smoothness\, Settings.Combat.AimbotSmooth * 100, 0, 100, function(v) Settings.Combat.AimbotSmooth = v / 100; SaveConfig() end)
-Combat_Aimbot:addSlider(\FOV Radius\, Settings.Combat.AimbotFOV, 50, 500, function(v) Settings.Combat.AimbotFOV = v; if FOVCircle then FOVCircle.Radius = v end; SaveConfig() end)
+local Visuals = Window:addPage('Visuals', 5012544693)
+local VisualsSection = Visuals:addSection('General')
+VisualsSection:addToggle('Enabled', Settings.Visuals.Enabled, function(v) Settings.Visuals.Enabled = v; SaveConfig() end)
+VisualsSection:addToggle('Team Check', Settings.Visuals.TeamCheck, function(v) Settings.Visuals.TeamCheck = v; SaveConfig() end)
+VisualsSection:addToggle('Glow ESP', Settings.Visuals.GlowESP, function(v) Settings.Visuals.GlowESP = v; SaveConfig() end)
+VisualsSection:addToggle('Skeleton ESP', Settings.Visuals.SkeletonESP, function(v) Settings.Visuals.SkeletonESP = v; SaveConfig() end)
+VisualsSection:addToggle('Nametags', Settings.Visuals.Nametags, function(v) Settings.Visuals.Nametags = v; SaveConfig() end)
+VisualsSection:addToggle('Tracers', Settings.Visuals.Tracers, function(v) Settings.Visuals.Tracers = v; SaveConfig() end)
+VisualsSection:addToggle('Box ESP', Settings.Visuals.BoxESP, function(v) Settings.Visuals.BoxESP = v; SaveConfig() end)
+VisualsSection:addColorPicker('Visible Color', Settings.Visuals.VisibleColor, function(v) Settings.Visuals.VisibleColor = v; SaveConfig() end)
+VisualsSection:addColorPicker('Hidden Color', Settings.Visuals.InvisibleColor, function(v) Settings.Visuals.InvisibleColor = v; SaveConfig() end)
 
-Combat_Other:addToggle(\Hitbox Expander\, Settings.Combat.HitboxExpander, function(v) Settings.Combat.HitboxExpander = v; SaveConfig() end)
-Combat_Other:addSlider(\Hitbox Size\, Settings.Combat.HitboxSize, 1, 30, function(v) Settings.Combat.HitboxSize = v; SaveConfig() end)
-Combat_Other:addToggle(\Spinbot\, Settings.Combat.Spinbot, function(v) Settings.Combat.Spinbot = v; SaveConfig() end)
-Combat_Other:addSlider(\Spinbot Speed\, Settings.Combat.SpinbotSpeed, 1, 50, function(v) Settings.Combat.SpinbotSpeed = v; SaveConfig() end)
+local Character = Window:addPage('Character', 5012544693)
+local CharacterSection = Character:addSection('Movement')
+CharacterSection:addSlider('WalkSpeed', Settings.Character.WalkSpeed, 16, 250, function(v) Settings.Character.WalkSpeed = v; SaveConfig() end)
+CharacterSection:addSlider('JumpPower', Settings.Character.JumpPower, 50, 500, function(v) Settings.Character.JumpPower = v; SaveConfig() end)
+CharacterSection:addToggle('Fly', Settings.Character.FlyEnabled, function(v) Settings.Character.FlyEnabled = v; SaveConfig() end)
+CharacterSection:addSlider('Fly Speed', Settings.Character.FlySpeed, 10, 200, function(v) Settings.Character.FlySpeed = v; SaveConfig() end)
+CharacterSection:addToggle('Noclip', Settings.Character.NoclipEnabled, function(v) Settings.Character.NoclipEnabled = v; SaveConfig() end)
+CharacterSection:addToggle('Infinite Jump', Settings.Character.InfiniteJump, function(v) Settings.Character.InfiniteJump = v; SaveConfig() end)
 
-Window:SelectPage(CombatPage, true)
+local Locations = Window:addPage('Locations', 5012544693)
+local LocationsSection = Locations:addSection('Teleport')
+LocationsSection:addButton('Spawn', function()
+    local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild('HumanoidRootPart')
+    if hrp then hrp.CFrame = CFrame.new(0, 50, 0) end
+end)
+LocationsSection:addButton('Random Player', function()
+    local list = {}
+    for _, p in ipairs(Players:GetPlayers()) do
+        if p ~= LocalPlayer and p.Character then table.insert(list, p) end
+    end
+    local target = list[math.random(#list)]
+    local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild('HumanoidRootPart')
+    local thrp = target and target.Character and target.Character:FindFirstChild('HumanoidRootPart')
+    if hrp and thrp then hrp.CFrame = thrp.CFrame * CFrame.new(0, 0, 3) end
+end)
 
--- VISUALS PAGE
-local VisualsPage = Window:addPage(\Visuals\, 5012544693)
-local Visuals_General = VisualsPage:addSection(\General\)
-local Visuals_ESP = VisualsPage:addSection(\ESP Settings\)
+local Misc = Window:addPage('Miscellaneous', 5012544693)
+local MiscSection = Misc:addSection('Utility')
+MiscSection:addToggle('Full Bright', Settings.Miscellaneous.FullBright, function(v) Settings.Miscellaneous.FullBright = v; ToggleFullBright(v); SaveConfig() end)
+MiscSection:addSlider('Camera FOV', Settings.CameraFOV, 70, 120, function(v) Settings.CameraFOV = v; Camera.FieldOfView = v; SaveConfig() end)
+MiscSection:addSlider('FPS Cap', Settings.Miscellaneous.FPSCap, 60, 360, function(v) Settings.Miscellaneous.FPSCap = v; setfpscap(v); SaveConfig() end)
+MiscSection:addToggle('Click Teleport', Settings.Miscellaneous.ClickTP, function(v) Settings.Miscellaneous.ClickTP = v; SaveConfig() end)
+MiscSection:addToggle('Anti AFK', Settings.Miscellaneous.AntiAFK, function(v) Settings.Miscellaneous.AntiAFK = v; InitAntiAFK(); SaveConfig() end)
+MiscSection:addToggle('Anti Kick', Settings.Miscellaneous.AntiKick, function(v) Settings.Miscellaneous.AntiKick = v; if v then InitAntiKick() end; SaveConfig() end)
+MiscSection:addButton('Server Hop', ServerHop)
+MiscSection:addButton('Rejoin', Rejoin)
 
-Visuals_General:addToggle(\Enabled\, Settings.Visuals.Enabled, function(v) Settings.Visuals.Enabled = v; SaveConfig() end)
-Visuals_General:addToggle(\Team Check\, Settings.Visuals.TeamCheck, function(v) Settings.Visuals.TeamCheck = v; SaveConfig() end)
+local SettingsPage = Window:addPage('Settings', 5012544693)
+local SettingsSection = SettingsPage:addSection('Configuration')
+SettingsSection:addButton('Save Config', SaveConfig)
+SettingsSection:addButton('Load Config', LoadConfig)
+SettingsSection:addButton('Destroy Script', DestroyScript)
 
-Visuals_ESP:addToggle(\Glow ESP\, Settings.Visuals.GlowESP, function(v) Settings.Visuals.GlowESP = v; SaveConfig() end)
-Visuals_ESP:addToggle(\Skeleton ESP\, Settings.Visuals.SkeletonESP, function(v) Settings.Visuals.SkeletonESP = v; SaveConfig() end)
-Visuals_ESP:addToggle(\Nametags\, Settings.Visuals.Nametags, function(v) Settings.Visuals.Nametags = v; SaveConfig() end)
-Visuals_ESP:addToggle(\Tracers\, Settings.Visuals.Tracers, function(v) Settings.Visuals.Tracers = v; SaveConfig() end)
-Visuals_ESP:addToggle(\Box ESP\, Settings.Visuals.BoxESP, function(v) Settings.Visuals.BoxESP = v; SaveConfig() end)
-Visuals_ESP:addColorPicker(\Visible Color\, Settings.Visuals.VisibleColor, function(v) Settings.Visuals.VisibleColor = v; SaveConfig() end)
-Visuals_ESP:addColorPicker(\Invisible Color\, Settings.Visuals.InvisibleColor, function(v) Settings.Visuals.InvisibleColor = v; SaveConfig() end)
-
--- CHARACTER PAGE
-local CharacterPage = Window:addPage(\Character\, 5012544693)
-local Character_Movement = CharacterPage:addSection(\Movement\)
-local Character_Other = CharacterPage:addSection(\Other\)
-
-Character_Movement:addSlider(\WalkSpeed\, Settings.Character.WalkSpeed, 16, 250, function(v) Settings.Character.WalkSpeed = v; SaveConfig() end)
-Character_Movement:addSlider(\JumpPower\, Settings.Character.JumpPower, 50, 500, function(v) Settings.Character.JumpPower = v; SaveConfig() end)
-Character_Movement:addToggle(\Fly Mode\, Settings.Character.FlyEnabled, function(v) Settings.Character.FlyEnabled = v; SaveConfig() end)
-Character_Movement:addSlider(\Fly Speed\, Settings.Character.FlySpeed, 10, 200, function(v) Settings.Character.FlySpeed = v; SaveConfig() end)
-Character_Movement:addToggle(\Noclip\, Settings.Character.NoclipEnabled, function(v) Settings.Character.NoclipEnabled = v; SaveConfig() end)
-
-Character_Other:addToggle(\Infinite Jump\, Settings.Character.InfiniteJump, function(v) Settings.Character.InfiniteJump = v; SaveConfig() end)
-Character_Other:addToggle(\Anti Ragdoll\, Settings.Character.AntiRagdoll, function(v) Settings.Character.AntiRagdoll = v; SaveConfig() end)
-Character_Other:addButton(\Force Respawn\, function() if LocalPlayer.Character then LocalPlayer.Character:BreakJoints() end end)
-
--- LOCATIONS PAGE
-local LocationsPage = Window:addPage(\Locations\, 5012544693)
-local Locations_Teleport = LocationsPage:addSection(\Teleport Locations\)
-
-Locations_Teleport:addButton(\Spawn Point\, function() if LocalPlayer.Character then local hrp = LocalPlayer.Character:FindFirstChild(''HumanoidRootPart''); if hrp then hrp.CFrame = CFrame.new(0, 50, 0) end end end)
-Locations_Teleport:addButton(\Random Player\, function() local plrs = {}; for _,p in ipairs(Players:GetPlayers()) do if p ~= LocalPlayer and p.Character then table.insert(plrs, p) end end; if #plrs > 0 then local t = plrs[math.random(#plrs)]; if t.Character then local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild(''HumanoidRootPart''); local tHrp = t.Character:FindFirstChild(''HumanoidRootPart''); if hrp and tHrp then hrp.CFrame = tHrp.CFrame * CFrame.new(0, 0, 3) end end end end)
-
--- MISCELLANEOUS PAGE
-local MiscPage = Window:addPage(\Miscellaneous\, 5012544693)
-local Misc_Visual = MiscPage:addSection(\Visual\)
-local Misc_Utility = MiscPage:addSection(\Utility\)
-
-Misc_Visual:addToggle(\Full Bright\, Settings.Miscellaneous.FullBright, function(v) Settings.Miscellaneous.FullBright = v; ToggleFullBright(v); SaveConfig() end)
-Misc_Visual:addSlider(\Camera FOV\, Settings.CameraFOV, 70, 120, function(v) Settings.CameraFOV = v; Camera.FieldOfView = v; SaveConfig() end)
-Misc_Visual:addSlider(\FPS Cap\, Settings.Miscellaneous.FPSCap, 60, 360, function(v) Settings.Miscellaneous.FPSCap = v; setfpscap(v); SaveConfig() end)
-
-Misc_Utility:addToggle(\Click Teleport\, Settings.Miscellaneous.ClickTP, function(v) Settings.Miscellaneous.ClickTP = v; SaveConfig() end)
-Misc_Utility:addToggle(\Anti AFK\, Settings.Miscellaneous.AntiAFK, function(v) Settings.Miscellaneous.AntiAFK = v; InitAntiAFK(); SaveConfig() end)
-Misc_Utility:addToggle(\Anti Kick\, Settings.Miscellaneous.AntiKick, function(v) Settings.Miscellaneous.AntiKick = v; if v then InitAntiKick() end; SaveConfig() end)
-Misc_Utility:addToggle(\Auto Reattach\, Settings.Miscellaneous.AutoReattach, function(v) Settings.Miscellaneous.AutoReattach = v; SaveConfig() end)
-Misc_Utility:addButton(\Server Hop\, ServerHop)
-Misc_Utility:addButton(\Rejoin Game\, Rejoin)
-
--- SETTINGS PAGE
-local SettingsPage = Window:addPage(\Settings\, 5012544693)
-local Settings_Config = SettingsPage:addSection(\Configuration\)
-
-Settings_Config:addButton(\Save Config\, SaveConfig)
-Settings_Config:addButton(\Load Config\, LoadConfig)
-Settings_Config:addButton(\DESTROY SCRIPT\, DestroyScript)
-
--- Initialize FOV Circle
 if Drawing then
- FOVCircle = CreateDrawing(''Circle'', {Thickness=2, NumSides=64, Radius=Settings.Combat.AimbotFOV, Filled=false, Visible=Settings.Combat.ShowFOV, Color=Color3.fromRGB(255,255,255), Transparency=1})
+    FOVCircle = CreateDrawing('Circle', {Thickness = 2, NumSides = 64, Radius = Settings.Combat.AimbotFOV, Filled = false, Visible = Settings.Combat.ShowFOV, Color = Color3.fromRGB(255, 255, 255), Transparency = 1})
 end
 
--- Main Loops
 table.insert(Connections, RunService.RenderStepped:Connect(function()
- if FOVCircle and Settings.Combat.ShowFOV then local mousePos = UserInputService:GetMouseLocation(); FOVCircle.Position = mousePos; FOVCircle.Radius = Settings.Combat.AimbotFOV; FOVCircle.Visible = true elseif FOVCircle then FOVCircle.Visible = false end
- for _, player in ipairs(Players:GetPlayers()) do if player ~= LocalPlayer then UpdateESP(player) end end
- UpdateAimbot()
+    if FOVCircle then
+        FOVCircle.Position = UserInputService:GetMouseLocation()
+        FOVCircle.Radius = Settings.Combat.AimbotFOV
+        FOVCircle.Visible = Settings.Combat.ShowFOV
+    end
+    for _, player in ipairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer then UpdateESP(player) end
+    end
+    UpdateAimbot()
 end))
 
 table.insert(Connections, RunService.Heartbeat:Connect(function()
- UpdateCharacter()
- UpdateCombat()
+    UpdateCharacter()
+    UpdateCombat()
 end))
 
--- Input Handling
-table.insert(Connections, UserInputService.InputBegan:Connect(function(input, gameProcessed)
- if gameProcessed then return end
- if input.KeyCode == Enum.KeyCode.T and Settings.Miscellaneous.ClickTP then ClickTeleport() end
- if input.KeyCode == Enum.KeyCode.Space and Settings.Character.InfiniteJump then if LocalPlayer.Character then local humanoid = LocalPlayer.Character:FindFirstChildOfClass(''Humanoid''); if humanoid then humanoid:ChangeState(Enum.HumanoidStateType.Jumping) end end end
+table.insert(Connections, UserInputService.InputBegan:Connect(function(input, processed)
+    if processed then return end
+    if input.KeyCode == Enum.KeyCode.RightShift then Window:toggle() end
+    if input.KeyCode == Enum.KeyCode.T and Settings.Miscellaneous.ClickTP then ClickTeleport() end
+    if input.KeyCode == Enum.KeyCode.Space and Settings.Character.InfiniteJump and LocalPlayer.Character then
+        local humanoid = LocalPlayer.Character:FindFirstChildOfClass('Humanoid')
+        if humanoid then humanoid:ChangeState(Enum.HumanoidStateType.Jumping) end
+    end
 end))
 
--- Player Events
-table.insert(Connections, Players.PlayerAdded:Connect(function(player) player.CharacterAdded:Connect(function() wait(0.5); UpdateESP(player) end) end))
-table.insert(Connections, Players.PlayerRemoving:Connect(function(player) if ESPObjects[player] then for _, obj in pairs(ESPObjects[player]) do if type(obj) == ''table'' then for _, line in pairs(obj) do if line.Remove then line:Remove() end end elseif obj and obj.Remove then obj:Remove() end end; ESPObjects[player] = nil end; if OriginalHitboxes[player] then OriginalHitboxes[player] = nil end end))
-
--- Auto Reattach
-if Settings.Miscellaneous.AutoReattach and queue_on_teleport then queue_on_teleport([[loadstring(game:HttpGet(''https://raw.githubusercontent.com/devanonaufal/phixblox/main/PhixBlox.lua''))()]]) end
-
--- Initialize
 LoadConfig()
-InitAntiKick()
+if Settings.Miscellaneous.AntiKick then InitAntiKick() end
 InitAntiAFK()
-
-print(''PhixBlox v2.0 loaded successfully!'')
-print(''UI: Westbound Style - 6 Pages'')
-print(''Press Right Shift to toggle UI'')
+print('PhixBlox loaded')
