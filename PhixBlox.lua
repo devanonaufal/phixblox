@@ -459,6 +459,19 @@ end
 -- UI BUILD (6 Pages: Combat, Visuals, Character, Locations, Miscellaneous, Settings)
 local Window = Library.new('PhixBlox v2.0')
 
+local Theme = {
+    Background    = Color3.fromRGB(10, 20, 30),
+    Glow          = Color3.fromRGB(100, 180, 230),
+    Accent        = Color3.fromRGB(15, 30, 45),
+    LightContrast = Color3.fromRGB(30, 45, 60),
+    DarkContrast  = Color3.fromRGB(20, 30, 40),
+    TextColor     = Color3.fromRGB(170, 250, 255)
+}
+
+for key, color in pairs(Theme) do
+    Window:setTheme(key, color)
+end
+
 local Combat = Window:addPage('Combat', 5012544693)
 local CombatAimbot = Combat:addSection('Aimbot')
 CombatAimbot:addToggle('Enabled', Settings.Combat.AimbotEnabled, function(v) Settings.Combat.AimbotEnabled = v; SaveConfig() end)
