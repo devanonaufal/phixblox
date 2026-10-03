@@ -295,11 +295,73 @@ do
 		utility:InitializeKeybind()
 		utility:DraggingEnabled(container.Main.TopBar, container.Main)
 		
-		return setmetatable({
+		-- Logo bulat draggable yang bisa open/close menu
+		local logo = utility:Create("ImageButton", {
+			Name = "PhixBloxLogo",
+			Parent = container,
+			BackgroundColor3 = Color3.fromRGB(10, 20, 30),
+			BackgroundTransparency = 0,
+			BorderSizePixel = 0,
+			Position = UDim2.new(0, 10, 0, 10),
+			Size = UDim2.new(0, 46, 0, 46),
+			ZIndex = 10,
+			AutoButtonColor = false,
+			Image = ""
+		}, {
+			utility:Create("UICorner", {
+				CornerRadius = UDim.new(1, 0)
+			}),
+			utility:Create("UIStroke", {
+				Color = Color3.fromRGB(100, 180, 230),
+				Thickness = 2,
+				ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+			}),
+			utility:Create("TextLabel", {
+				Name = "Label",
+				BackgroundTransparency = 1,
+				Size = UDim2.new(1, 0, 1, 0),
+				ZIndex = 11,
+				Font = Enum.Font.GothamBold,
+				Text = "P",
+				TextColor3 = Color3.fromRGB(170, 250, 255),
+				TextSize = 22
+			})
+		})
+		
+		-- Drag logo
+		utility:DraggingEnabled(logo)
+		
+		-- Click logo → toggle menu
+		local logoDragged = false
+		logo.InputBegan:Connect(function(input)
+			if input.UserInputType == Enum.UserInputType.MouseButton1 then
+				logoDragged = false
+			end
+		end)
+		logo.InputChanged:Connect(function(input)
+			if input.UserInputType == Enum.UserInputType.MouseMovement then
+				logoDragged = true
+			end
+		end)
+		logo.MouseButton1Click:Connect(function()
+			if not logoDragged then
+				-- pake library metatable toggle via container reference
+				local lib = container._library
+				if lib then lib:toggle() end
+			end
+		end)
+		
+		local lib = setmetatable({
 			container = container,
 			pagesContainer = container.Main.Pages.Pages_Container,
-			pages = {}
+			pages = {},
+			logo = logo
 		}, library)
+		
+		-- simpan referensi balik agar logo bisa panggil toggle
+		container._library = lib
+		
+		return lib
 	end
 	
 	function page.new(library, title, icon)
