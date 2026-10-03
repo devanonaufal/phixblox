@@ -699,7 +699,7 @@ for key, color in pairs(Theme) do
     Window:setTheme(key, color)
 end
 coroutine.wrap(function()
-    task.wait(0.1) -- tunggu beberapa frame agar layout engine selesai hitung AbsoluteSize
+    task.wait(0.2)
     Window:SelectPage(Combat, true)
 end)()
 

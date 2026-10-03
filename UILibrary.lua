@@ -96,7 +96,7 @@ do
 		utility:Tween(clone, {Size = object.Size}, 0.2)
 		
 		spawn(function()
-			wait(0.2)
+			task.wait(0.2)
 		
 			object.ImageTransparency = 0
 			clone:Destroy()
@@ -150,7 +150,7 @@ do
 			key = input.InputBegan:Wait()
 		end
 		
-		wait() -- overlapping connection
+		task.wait() -- overlapping connection
 		
 		return key
 	end
@@ -736,7 +736,7 @@ do
 		notification.Size = UDim2.new(0, 0, 0, 60)
 		
 		utility:Tween(notification, {Size = UDim2.new(0, textSize.X + 70, 0, 60)}, 0.2)
-		wait(0.2)
+		task.wait(0.2)
 		
 		notification.ClipsDescendants = false
 		utility:Tween(notification.Flash, {
@@ -759,13 +759,13 @@ do
 			notification.Flash.Position = UDim2.new(0, 0, 0, 0)
 			utility:Tween(notification.Flash, {Size = UDim2.new(1, 0, 1, 0)}, 0.2)
 			
-			wait(0.2)
+			task.wait(0.2)
 			utility:Tween(notification, {
 				Size = UDim2.new(0, 0, 0, 60),
 				Position = notification.Position + UDim2.new(0, textSize.X + 70, 0, 0)
 			}, 0.2)
 			
-			wait(0.2)
+			task.wait(0.2)
 			notification:Destroy()
 		end
 		
@@ -843,7 +843,7 @@ do
 			text.TextSize = 0
 			utility:Tween(button.Title, {TextSize = 14}, 0.2)
 			
-			wait(0.2)
+			task.wait(0.2)
 			utility:Tween(button.Title, {TextSize = 12}, 0.2)
 			
 			if callback then
@@ -2011,7 +2011,7 @@ do
 			for i, section in pairs(page.sections) do
 			
 				utility:Tween(section.container.Title, {TextTransparency = 0}, 0.1)
-				section:Resize(true)
+				section:Resize(false) -- set size langsung agar page:Resize bisa baca Size.Y.Offset
 				
 				task.wait(0.05)
 			end
