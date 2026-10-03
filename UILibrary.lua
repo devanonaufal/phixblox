@@ -347,13 +347,13 @@ do
 		utility:DraggingEnabled(container.Main.TopBar, container.Main)
 		
 		-- Wire tombol controls (minimize, maximize, close)
+		local libRef -- upvalue, di-set setelah lib dibuat
 		local controls = container.Main.TopBar.Controls
 		local mainFrame = container.Main
 		local maximized, prevSize, prevPos = false, nil, nil
 		
 		controls.Minimize.MouseButton1Click:Connect(function()
-			local lib = container._library
-			if lib then lib:toggle() end
+			if libRef then libRef:toggle() end
 		end)
 		
 		controls.Maximize.MouseButton1Click:Connect(function()
@@ -423,8 +423,7 @@ do
 				local dx = math.abs(logo.Position.X.Offset - clickStartPos.X.Offset)
 				local dy = math.abs(logo.Position.Y.Offset - clickStartPos.Y.Offset)
 				if dx < 5 and dy < 5 then
-					local lib = container._library
-					if lib then lib:toggle() end
+					if libRef then libRef:toggle() end
 				end
 			end
 		end)
@@ -436,7 +435,7 @@ do
 			logo = logo
 		}, library)
 		
-		container._library = lib
+		libRef = lib  -- set upvalue sekarang agar closures di atas bisa akses
 		return lib
 	end
 	
