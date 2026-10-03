@@ -6,7 +6,7 @@
 
 -- Load UI Library  
 local ok, Library = pcall(function()
-    return loadstring(game:HttpGet("https://raw.githubusercontent.com/devanonaufal/phixblox/main/UILibrary.lua"))()
+    return loadstring(game:HttpGet("https://raw.githubusercontent.com/devanonaufal/phixblox/main/UILibrary.lua?t=" .. math.floor(tick())))()
 end)
 if not ok then
     warn("[PhixBlox] UILibrary load error: " .. tostring(Library))
