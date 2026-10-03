@@ -36,13 +36,10 @@ local Settings = {
     Visuals = {
         Enabled = false,
         GlowESP = false,
-        SkeletonESP = false,
         Nametags = false,
         Tracers = false,
-        BoxESP = false,
         VisibleColor = Color3.fromRGB(0, 255, 0),
-        InvisibleColor = Color3.fromRGB(255, 0, 0),
-        TeamCheck = false
+        InvisibleColor = Color3.fromRGB(255, 0, 0)
     },
     Character = {
         WalkSpeed = 16,
@@ -60,7 +57,9 @@ local Settings = {
         FPSCap = 60,
         ClickTP = false,
         AutoReattach = false,
-        AntiKick = false
+        AntiKick = false,
+        GodMode = false,
+        Gravity = 196.2
     },
     CameraFOV = 70
 }
@@ -577,12 +576,9 @@ Window:SelectPage(Combat, true)
 local Visuals = Window:addPage('Visuals', 5012544693)
 local VisualsSection = Visuals:addSection('General')
 VisualsSection:addToggle('Enabled', Settings.Visuals.Enabled, function(v) Settings.Visuals.Enabled = v; SaveConfig() end)
-VisualsSection:addToggle('Team Check', Settings.Visuals.TeamCheck, function(v) Settings.Visuals.TeamCheck = v; SaveConfig() end)
 VisualsSection:addToggle('Glow ESP', Settings.Visuals.GlowESP, function(v) Settings.Visuals.GlowESP = v; SaveConfig() end)
-VisualsSection:addToggle('Skeleton ESP', Settings.Visuals.SkeletonESP, function(v) Settings.Visuals.SkeletonESP = v; SaveConfig() end)
 VisualsSection:addToggle('Nametags', Settings.Visuals.Nametags, function(v) Settings.Visuals.Nametags = v; SaveConfig() end)
 VisualsSection:addToggle('Tracers', Settings.Visuals.Tracers, function(v) Settings.Visuals.Tracers = v; SaveConfig() end)
-VisualsSection:addToggle('Box ESP', Settings.Visuals.BoxESP, function(v) Settings.Visuals.BoxESP = v; SaveConfig() end)
 VisualsSection:addColorPicker('Visible Color', Settings.Visuals.VisibleColor, function(v) Settings.Visuals.VisibleColor = v; SaveConfig() end)
 VisualsSection:addColorPicker('Hidden Color', Settings.Visuals.InvisibleColor, function(v) Settings.Visuals.InvisibleColor = v; SaveConfig() end)
 
@@ -595,35 +591,70 @@ CharacterSection:addSlider('Fly Speed', Settings.Character.FlySpeed, 10, 200, fu
 CharacterSection:addToggle('Noclip', Settings.Character.NoclipEnabled, function(v) Settings.Character.NoclipEnabled = v; SaveConfig() end)
 CharacterSection:addToggle('Infinite Jump', Settings.Character.InfiniteJump, function(v) Settings.Character.InfiniteJump = v; SaveConfig() end)
 
-local Locations = Window:addPage('Locations', 5012544693)
-local LocationsSection = Locations:addSection('Teleport')
-LocationsSection:addButton('Spawn', function()
-    local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild('HumanoidRootPart')
-    if hrp then hrp.CFrame = CFrame.new(0, 50, 0) end
-end)
-LocationsSection:addButton('Random Player', function()
-    local list = {}
+-- Locations (Universal)
+local playerList = {}
+local function GetPlayerNames()
+    playerList = {}
     for _, p in ipairs(Players:GetPlayers()) do
-        if p ~= LocalPlayer and p.Character then table.insert(list, p) end
+        if p ~= LocalPlayer then table.insert(playerList, p.Name) end
     end
-    if #list == 0 then return end
-    local target = list[math.random(#list)]
+    return playerList
+end
+
+local Locations = Window:addPage('Locations', 5012544693)
+local TeleportSection = Locations:addSection('Teleport To Player')
+local selectedTP = nil
+TeleportSection:addDropdown('Player', GetPlayerNames(), function(v) selectedTP = v end)
+TeleportSection:addButton('Teleport', function()
+    if not selectedTP then return end
+    local target = Players:FindFirstChild(selectedTP)
     local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild('HumanoidRootPart')
     local thrp = target and target.Character and target.Character:FindFirstChild('HumanoidRootPart')
     if hrp and thrp then hrp.CFrame = thrp.CFrame * CFrame.new(0, 0, 3) end
 end)
+TeleportSection:addButton('Bring Player', function()
+    if not selectedTP then return end
+    local target = Players:FindFirstChild(selectedTP)
+    local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild('HumanoidRootPart')
+    local thrp = target and target.Character and target.Character:FindFirstChild('HumanoidRootPart')
+    if hrp and thrp then thrp.CFrame = hrp.CFrame * CFrame.new(0, 0, 3) end
+end)
+TeleportSection:addButton('Refresh List', function()
+    GetPlayerNames()
+end)
+
 
 local Misc = Window:addPage('Miscellaneous', 5012544693)
 local MiscSection = Misc:addSection('Utility')
 MiscSection:addToggle('Full Bright', Settings.Miscellaneous.FullBright, function(v) Settings.Miscellaneous.FullBright = v; ToggleFullBright(v); SaveConfig() end)
 MiscSection:addSlider('Camera FOV', Settings.CameraFOV, 70, 120, function(v) Settings.CameraFOV = v; Camera.FieldOfView = v; SaveConfig() end)
 MiscSection:addSlider('FPS Cap', Settings.Miscellaneous.FPSCap, 60, 360, function(v) Settings.Miscellaneous.FPSCap = v; pcall(setfpscap, v); SaveConfig() end)
+MiscSection:addSlider('Gravity', Settings.Miscellaneous.Gravity, 0, 400, function(v) Settings.Miscellaneous.Gravity = v; Workspace.Gravity = v; SaveConfig() end)
+MiscSection:addToggle('God Mode', Settings.Miscellaneous.GodMode, function(v)
+    Settings.Miscellaneous.GodMode = v
+    if LocalPlayer.Character then
+        local hum = LocalPlayer.Character:FindFirstChildOfClass('Humanoid')
+        if hum then
+            hum.MaxHealth = v and math.huge or 100
+            if v then hum.Health = math.huge end
+        end
+    end
+    SaveConfig()
+end)
 MiscSection:addToggle('Click Teleport', Settings.Miscellaneous.ClickTP, function(v) Settings.Miscellaneous.ClickTP = v; SaveConfig() end)
 MiscSection:addToggle('Anti AFK', Settings.Miscellaneous.AntiAFK, function(v) Settings.Miscellaneous.AntiAFK = v; InitAntiAFK(); SaveConfig() end)
 MiscSection:addToggle('Anti Kick', Settings.Miscellaneous.AntiKick, function(v) Settings.Miscellaneous.AntiKick = v; if v then InitAntiKick() end; SaveConfig() end)
 MiscSection:addToggle('Free Cam', false, function(v) FreecamEnabled = v; InitFreecam() end)
 MiscSection:addButton('Server Hop', ServerHop)
 MiscSection:addButton('Rejoin', Rejoin)
+
+local MiscTools = Misc:addSection('External Tools')
+MiscTools:addButton('Infinite Yield', function()
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infinite-yield/master/infinite-yield.lua'))()
+end)
+MiscTools:addButton('Dex Explorer', function()
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/LorekeeperZinnia/Dex/master/Dex.lua'))()
+end)
 
 local SettingsPage = Window:addPage('Settings', 5012544693)
 local SettingsSection = SettingsPage:addSection('Configuration')
@@ -665,4 +696,20 @@ end))
 LoadConfig()
 if Settings.Miscellaneous.AntiKick then InitAntiKick() end
 InitAntiAFK()
+
+-- Re-apply stats on respawn
+LocalPlayer.CharacterAdded:Connect(function(char)
+    task.wait(1)
+    local hum = char:FindFirstChildOfClass('Humanoid')
+    if hum then
+        hum.WalkSpeed = Settings.Character.WalkSpeed
+        hum.JumpPower = Settings.Character.JumpPower
+        if Settings.Miscellaneous.GodMode then
+            hum.MaxHealth = math.huge
+            hum.Health = math.huge
+        end
+    end
+    Workspace.Gravity = Settings.Miscellaneous.Gravity
+end)
+
 print('PhixBlox loaded')
