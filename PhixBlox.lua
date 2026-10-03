@@ -5,7 +5,14 @@
 ]]
 
 -- Load UI Library  
-local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/devanonaufal/phixblox/main/UILibrary.lua"))()
+local ok, Library = pcall(function()
+    return loadstring(game:HttpGet("https://raw.githubusercontent.com/devanonaufal/phixblox/main/UILibrary.lua"))()
+end)
+if not ok then
+    warn("[PhixBlox] UILibrary load error: " .. tostring(Library))
+    return
+end
+
 
 -- Services
 local Players = game:GetService("Players")
@@ -581,7 +588,11 @@ local function DestroyScript()
 end
 
 -- UI BUILD (6 Pages: Combat, Visuals, Character, Locations, Miscellaneous, Settings)
-local Window = Library.new('PhixBlox v2.0')
+local ok2, Window = pcall(function() return Library.new('PhixBlox v2.0') end)
+if not ok2 then
+    warn("[PhixBlox] Window create error: " .. tostring(Window))
+    return
+end
 
 local Theme = {
     Background    = Color3.fromRGB(10, 20, 30),
