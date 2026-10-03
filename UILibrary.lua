@@ -255,7 +255,7 @@ do
 						BackgroundTransparency = 1,
 						Position = UDim2.new(0, 0, 0, 10),
 						Size = UDim2.new(1, 0, 1, -20),
-						CanvasSize = UDim2.new(0, 0, 0, 314),
+						CanvasSize = UDim2.new(0, 0, 0, 0),
 						ScrollBarThickness = 0
 					}, {
 						utility:Create("UIListLayout", {
@@ -562,6 +562,10 @@ do
 		local button = page.button
 		
 		table.insert(self.pages, page)
+
+		-- auto-update sidebar canvas height setiap page ditambah
+		local pageCount = #self.pages
+		self.pagesContainer.CanvasSize = UDim2.new(0, 0, 0, pageCount * 36)
 
 		button.MouseButton1Click:Connect(function()
 			self:SelectPage(page, true)
