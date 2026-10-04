@@ -4,12 +4,12 @@
     Pages: Combat, Visuals, Character, Locations, Miscellaneous, Settings
 ]]
 
--- Load UI Library (bluexhub)
+-- Load UI Library
 local ok, Library = pcall(function()
     return loadstring(game:HttpGet("https://raw.githubusercontent.com/devanonaufal/phixblox/main/UILibrary.lua?t=" .. math.floor(tick())))()
 end)
 if not ok then
-    warn("[PhixBlox] bluexhub load error: " .. tostring(Library))
+    warn("[PhixBlox] UI Library load error: " .. tostring(Library))
     return
 end
 
@@ -617,7 +617,7 @@ local function DestroyScript()
     end
     -- Stop Freecam if active
     FreecamEnabled = false; pcall(function() RunService:UnbindFromRenderStep('PhixFreecam') end)
-    -- Destroy bluexhub GUI
+    -- Destroy PhixBlox GUI
     local gui = game.Players.LocalPlayer.PlayerGui:FindFirstChild('Excusyz')
     if gui then gui:Destroy() end
     print('PhixBlox destroyed successfully')
