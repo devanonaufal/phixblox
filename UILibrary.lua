@@ -1,4 +1,4 @@
-﻿Library = {}
+Library = {}
 
 local function Tw(info)
 	local Value = info.vu or info.Value or info.value or info.Vu or info.v or info.u
