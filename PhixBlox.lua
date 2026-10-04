@@ -618,56 +618,57 @@ local function DestroyScript()
     -- Stop Freecam if active
     FreecamEnabled = false; pcall(function() RunService:UnbindFromRenderStep('PhixFreecam') end)
     -- Destroy PhixBlox GUI
-    local gui = game.Players.LocalPlayer.PlayerGui:FindFirstChild('PhixBlox')
-    if gui then gui:Destroy() end
+    pcall(function() Library:Destroy() end)
     print('PhixBlox destroyed successfully')
 end
 
--- UI BUILD (6 Pages: Combat, Visuals, Character, Locations, Miscellaneous, Settings)
+
+-- UI BUILD
 local ok2, Window = pcall(function()
-    return Library:CreateWindow({ Name = 'PhixBlox', Icon = 'box' })
+    return Library:MakeWindow({ 'PhixBlox', 'Roblox Utility Hub' })
 end)
 if not ok2 then
     warn("[PhixBlox] Window create error: " .. tostring(Window))
     return
 end
 
-
 -- Tab: Combat
-local CombatTab = Window:CreateTab({ Name = 'Combat', Icon = 'crosshair' })
-local CombatAimbot = CombatTab:CreateSection({ Name = 'Aimbot', Side = 'Left' })
-CombatAimbot:CreateToggle({ Name = 'Enabled', Value = Settings.Combat.AimbotEnabled, Callback = function(v) Settings.Combat.AimbotEnabled = v; SaveConfig() end })
-CombatAimbot:CreateToggle({ Name = 'Wall Check', Value = Settings.Combat.WallCheck, Callback = function(v) Settings.Combat.WallCheck = v; SaveConfig() end })
-CombatAimbot:CreateToggle({ Name = 'Show FOV', Value = Settings.Combat.ShowFOV, Callback = function(v) Settings.Combat.ShowFOV = v; if FOVCircle then FOVCircle.Visible = v end; SaveConfig() end })
-CombatAimbot:CreateSlider({ Name = 'Smooth', Min = 0, Max = 100, Value = Settings.Combat.AimbotSmooth * 100, Callback = function(v) Settings.Combat.AimbotSmooth = v / 100; SaveConfig() end })
-CombatAimbot:CreateSlider({ Name = 'FOV', Min = 50, Max = 500, Value = Settings.Combat.AimbotFOV, Callback = function(v) Settings.Combat.AimbotFOV = v; if FOVCircle then FOVCircle.Radius = v end; SaveConfig() end })
-local CombatExtra = CombatTab:CreateSection({ Name = 'Extras', Side = 'Right' })
-CombatExtra:CreateToggle({ Name = 'Hitbox Expander', Value = Settings.Combat.HitboxExpander, Callback = function(v) Settings.Combat.HitboxExpander = v; SaveConfig() end })
-CombatExtra:CreateSlider({ Name = 'Hitbox Size', Min = 1, Max = 30, Value = Settings.Combat.HitboxSize, Callback = function(v) Settings.Combat.HitboxSize = v; SaveConfig() end })
-CombatExtra:CreateToggle({ Name = 'Spinbot', Value = Settings.Combat.Spinbot, Callback = function(v) Settings.Combat.Spinbot = v; SaveConfig() end })
-CombatExtra:CreateSlider({ Name = 'Spinbot Speed', Min = 1, Max = 50, Value = Settings.Combat.SpinbotSpeed, Callback = function(v) Settings.Combat.SpinbotSpeed = v; SaveConfig() end })
+local CombatTab = Window:MakeTab({ 'Combat', 'rbxassetid://10709752996' })
+CombatTab:AddSection('Aimbot')
+CombatTab:AddToggle({ 'Enabled', Settings.Combat.AimbotEnabled, function(v) Settings.Combat.AimbotEnabled = v; SaveConfig() end })
+CombatTab:AddToggle({ 'Wall Check', Settings.Combat.WallCheck, function(v) Settings.Combat.WallCheck = v; SaveConfig() end })
+CombatTab:AddToggle({ 'Show FOV', Settings.Combat.ShowFOV, function(v) Settings.Combat.ShowFOV = v; if FOVCircle then FOVCircle.Visible = v end; SaveConfig() end })
+CombatTab:AddSlider({ 'Smooth', 0, 100, 1, Settings.Combat.AimbotSmooth * 100, function(v) Settings.Combat.AimbotSmooth = v / 100; SaveConfig() end })
+CombatTab:AddSlider({ 'FOV', 50, 500, 1, Settings.Combat.AimbotFOV, function(v) Settings.Combat.AimbotFOV = v; if FOVCircle then FOVCircle.Radius = v end; SaveConfig() end })
+CombatTab:AddSection('Extras')
+CombatTab:AddToggle({ 'Hitbox Expander', Settings.Combat.HitboxExpander, function(v) Settings.Combat.HitboxExpander = v; SaveConfig() end })
+CombatTab:AddSlider({ 'Hitbox Size', 1, 30, 1, Settings.Combat.HitboxSize, function(v) Settings.Combat.HitboxSize = v; SaveConfig() end })
+CombatTab:AddToggle({ 'Spinbot', Settings.Combat.Spinbot, function(v) Settings.Combat.Spinbot = v; SaveConfig() end })
+CombatTab:AddSlider({ 'Spinbot Speed', 1, 50, 1, Settings.Combat.SpinbotSpeed, function(v) Settings.Combat.SpinbotSpeed = v; SaveConfig() end })
 
-local VisualsTab = Window:CreateTab({ Name = 'Visuals', Icon = 'eye' })
-local VisualsSection = VisualsTab:CreateSection({ Name = 'ESP', Side = 'Left' })
-VisualsSection:CreateToggle({ Name = 'Enabled', Value = Settings.Visuals.Enabled, Callback = function(v) Settings.Visuals.Enabled = v; SaveConfig() end })
-VisualsSection:CreateToggle({ Name = 'Glow ESP', Value = Settings.Visuals.GlowESP, Callback = function(v) Settings.Visuals.GlowESP = v; SaveConfig() end })
-VisualsSection:CreateToggle({ Name = 'Nametags', Value = Settings.Visuals.Nametags, Callback = function(v) Settings.Visuals.Nametags = v; SaveConfig() end })
-VisualsSection:CreateToggle({ Name = 'Tracers', Value = Settings.Visuals.Tracers, Callback = function(v) Settings.Visuals.Tracers = v; SaveConfig() end })
-local VisualsColor = VisualsTab:CreateSection({ Name = 'Colors', Side = 'Right' })
-VisualsColor:CreateColorPicker({ Name = 'Visible Color', Color = Settings.Visuals.VisibleColor, Callback = function(r, g, b) Settings.Visuals.VisibleColor = Color3.fromRGB(r, g, b); SaveConfig() end })
-VisualsColor:CreateColorPicker({ Name = 'Hidden Color', Color = Settings.Visuals.InvisibleColor, Callback = function(r, g, b) Settings.Visuals.InvisibleColor = Color3.fromRGB(r, g, b); SaveConfig() end })
+-- Tab: Visuals
+local VisualsTab = Window:MakeTab({ 'Visuals', 'rbxassetid://10709752996' })
+VisualsTab:AddSection('ESP')
+VisualsTab:AddToggle({ 'Enabled', Settings.Visuals.Enabled, function(v) Settings.Visuals.Enabled = v; SaveConfig() end })
+VisualsTab:AddToggle({ 'Glow ESP', Settings.Visuals.GlowESP, function(v) Settings.Visuals.GlowESP = v; SaveConfig() end })
+VisualsTab:AddToggle({ 'Nametags', Settings.Visuals.Nametags, function(v) Settings.Visuals.Nametags = v; SaveConfig() end })
+VisualsTab:AddToggle({ 'Tracers', Settings.Visuals.Tracers, function(v) Settings.Visuals.Tracers = v; SaveConfig() end })
+VisualsTab:AddSection('Colors')
+VisualsTab:AddColorPicker({ 'Visible Color', Settings.Visuals.VisibleColor, function(c) Settings.Visuals.VisibleColor = c; SaveConfig() end })
+VisualsTab:AddColorPicker({ 'Hidden Color', Settings.Visuals.InvisibleColor, function(c) Settings.Visuals.InvisibleColor = c; SaveConfig() end })
 
-local CharTab = Window:CreateTab({ Name = 'Character', Icon = 'user' })
-local CharSection = CharTab:CreateSection({ Name = 'Movement', Side = 'Left' })
-CharSection:CreateSlider({ Name = 'WalkSpeed', Min = 16, Max = 250, Value = Settings.Character.WalkSpeed, Callback = function(v) Settings.Character.WalkSpeed = v; SaveConfig() end })
-CharSection:CreateSlider({ Name = 'JumpPower', Min = 50, Max = 500, Value = Settings.Character.JumpPower, Callback = function(v) Settings.Character.JumpPower = v; SaveConfig() end })
-CharSection:CreateSlider({ Name = 'Fly Speed', Min = 10, Max = 200, Value = Settings.Character.FlySpeed, Callback = function(v) Settings.Character.FlySpeed = v; SaveConfig() end })
-local CharSection2 = CharTab:CreateSection({ Name = 'Modes', Side = 'Right' })
-CharSection2:CreateToggle({ Name = 'Fly', Value = Settings.Character.FlyEnabled, Callback = function(v) Settings.Character.FlyEnabled = v; SaveConfig() end })
-CharSection2:CreateToggle({ Name = 'Noclip', Value = Settings.Character.NoclipEnabled, Callback = function(v) Settings.Character.NoclipEnabled = v; SaveConfig() end })
-CharSection2:CreateToggle({ Name = 'Infinite Jump', Value = Settings.Character.InfiniteJump, Callback = function(v) Settings.Character.InfiniteJump = v; SaveConfig() end })
+-- Tab: Character
+local CharTab = Window:MakeTab({ 'Character', 'rbxassetid://10709752996' })
+CharTab:AddSection('Movement')
+CharTab:AddSlider({ 'WalkSpeed', 16, 250, 1, Settings.Character.WalkSpeed, function(v) Settings.Character.WalkSpeed = v; SaveConfig() end })
+CharTab:AddSlider({ 'JumpPower', 50, 500, 1, Settings.Character.JumpPower, function(v) Settings.Character.JumpPower = v; SaveConfig() end })
+CharTab:AddSlider({ 'Fly Speed', 10, 200, 1, Settings.Character.FlySpeed, function(v) Settings.Character.FlySpeed = v; SaveConfig() end })
+CharTab:AddSection('Modes')
+CharTab:AddToggle({ 'Fly', Settings.Character.FlyEnabled, function(v) Settings.Character.FlyEnabled = v; SaveConfig() end })
+CharTab:AddToggle({ 'Noclip', Settings.Character.NoclipEnabled, function(v) Settings.Character.NoclipEnabled = v; SaveConfig() end })
+CharTab:AddToggle({ 'Infinite Jump', Settings.Character.InfiniteJump, function(v) Settings.Character.InfiniteJump = v; SaveConfig() end })
 
--- Locations
+-- Tab: Locations
 local playerList = {}
 local function GetPlayerNames()
     playerList = {}
@@ -678,31 +679,26 @@ local function GetPlayerNames()
 end
 GetPlayerNames()
 
--- helper: split by single char delimiter (string.split tidak ada di Lua standard)
 local function splitStr(s, sep)
     local parts = {}
-    for part in s:gmatch("([^" .. sep .. "]+)") do
-        table.insert(parts, part)
-    end
+    for part in s:gmatch("([^" .. sep .. "]+)") do table.insert(parts, part) end
     return parts
 end
 
--- Cycle player selector state
 local selectedTP = playerList[1]
 local coordText = "0,10,0"
 
-local LocTab = Window:CreateTab({ Name = 'Locations', Icon = 'map-pin' })
-local TPSection = LocTab:CreateSection({ Name = 'Teleport', Side = 'Left' })
-
-TPSection:CreateTextBox({ Name = 'Coordinates', Placeholder = '0,10,0', Callback = function(v) coordText = v end })
-TPSection:CreateButton({ Name = 'Teleport to Coordinates', Callback = function()
+local LocTab = Window:MakeTab({ 'Locations', 'rbxassetid://10709752996' })
+LocTab:AddSection('Teleport')
+LocTab:AddTextBox({ 'Coordinates', '0,10,0', function(v) coordText = v end, Placeholder = '0,10,0' })
+LocTab:AddButton({ 'Teleport to Coordinates', function()
     local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild('HumanoidRootPart')
     if not hrp then return end
     local parts = splitStr(coordText, ',')
     local x, y, z = tonumber(parts[1]), tonumber(parts[2]), tonumber(parts[3])
     if x and y and z then hrp.CFrame = CFrame.new(x, y, z) end
 end })
-TPSection:CreateButton({ Name = 'Copy My Position', Callback = function()
+LocTab:AddButton({ 'Copy My Position', function()
     local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild('HumanoidRootPart')
     if not hrp then return end
     local p = hrp.Position
@@ -710,23 +706,20 @@ TPSection:CreateButton({ Name = 'Copy My Position', Callback = function()
     coordText = str
     pcall(setclipboard, str)
 end })
-
-local PlayerSection = LocTab:CreateSection({ Name = 'Player TP', Side = 'Right' })
-local ddList = PlayerSection:CreateDropdown({ Name = 'Select Player', List = playerList, Callback = function(v) selectedTP = v end })
-PlayerSection:CreateButton({ Name = 'Refresh Player List', Callback = function()
+LocTab:AddSection('Player TP')
+local ddObj = LocTab:AddDropdown({ 'Select Player', playerList, nil, function(v) selectedTP = v end })
+LocTab:AddButton({ 'Refresh Player List', function()
     GetPlayerNames()
-    ddList:Clear()
-    for _, name in ipairs(playerList) do ddList:AddList(name) end
-    selectedTP = playerList[1]
+    ddObj:SetOptions(playerList)
 end })
-PlayerSection:CreateButton({ Name = 'TP to Player', Callback = function()
+LocTab:AddButton({ 'TP to Player', function()
     if not selectedTP then return end
     local target = Players:FindFirstChild(selectedTP)
     local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild('HumanoidRootPart')
     local thrp = target and target.Character and target.Character:FindFirstChild('HumanoidRootPart')
     if hrp and thrp then hrp.CFrame = thrp.CFrame * CFrame.new(0, 0, 3) end
 end })
-PlayerSection:CreateButton({ Name = 'TP Top Player', Callback = function()
+LocTab:AddButton({ 'TP Top Player', function()
     if not selectedTP then return end
     local target = Players:FindFirstChild(selectedTP)
     local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild('HumanoidRootPart')
@@ -735,13 +728,13 @@ PlayerSection:CreateButton({ Name = 'TP Top Player', Callback = function()
 end })
 
 -- Tab: Misc
-local MiscTab = Window:CreateTab({ Name = 'Misc', Icon = 'settings' })
-local MiscSection = MiscTab:CreateSection({ Name = 'Utility', Side = 'Left' })
-MiscSection:CreateToggle({ Name = 'Full Bright', Value = Settings.Miscellaneous.FullBright, Callback = function(v) Settings.Miscellaneous.FullBright = v; ToggleFullBright(v); SaveConfig() end })
-MiscSection:CreateSlider({ Name = 'Camera FOV', Min = 70, Max = 120, Value = Settings.CameraFOV, Callback = function(v) Settings.CameraFOV = v; Camera.FieldOfView = v; SaveConfig() end })
-MiscSection:CreateSlider({ Name = 'FPS Cap', Min = 60, Max = 360, Value = Settings.Miscellaneous.FPSCap, Callback = function(v) Settings.Miscellaneous.FPSCap = v; pcall(setfpscap, v); SaveConfig() end })
-MiscSection:CreateSlider({ Name = 'Gravity', Min = 0, Max = 400, Value = Settings.Miscellaneous.Gravity, Callback = function(v) Settings.Miscellaneous.Gravity = v; Workspace.Gravity = v; SaveConfig() end })
-MiscSection:CreateToggle({ Name = 'God Mode', Value = Settings.Miscellaneous.GodMode, Callback = function(v)
+local MiscTab = Window:MakeTab({ 'Misc', 'rbxassetid://10709752996' })
+MiscTab:AddSection('Utility')
+MiscTab:AddToggle({ 'Full Bright', Settings.Miscellaneous.FullBright, function(v) Settings.Miscellaneous.FullBright = v; ToggleFullBright(v); SaveConfig() end })
+MiscTab:AddSlider({ 'Camera FOV', 70, 120, 1, Settings.CameraFOV, function(v) Settings.CameraFOV = v; Camera.FieldOfView = v; SaveConfig() end })
+MiscTab:AddSlider({ 'FPS Cap', 60, 360, 1, Settings.Miscellaneous.FPSCap, function(v) Settings.Miscellaneous.FPSCap = v; pcall(setfpscap, v); SaveConfig() end })
+MiscTab:AddSlider({ 'Gravity', 0, 400, 1, Settings.Miscellaneous.Gravity, function(v) Settings.Miscellaneous.Gravity = v; Workspace.Gravity = v; SaveConfig() end })
+MiscTab:AddToggle({ 'God Mode', Settings.Miscellaneous.GodMode, function(v)
     Settings.Miscellaneous.GodMode = v
     if LocalPlayer.Character then
         local hum = LocalPlayer.Character:FindFirstChildOfClass('Humanoid')
@@ -749,26 +742,28 @@ MiscSection:CreateToggle({ Name = 'God Mode', Value = Settings.Miscellaneous.God
     end
     SaveConfig()
 end })
-MiscSection:CreateToggle({ Name = 'Click Teleport', Value = Settings.Miscellaneous.ClickTP, Callback = function(v) Settings.Miscellaneous.ClickTP = v; UpdateClickTPConn(); SaveConfig() end })
-MiscSection:CreateToggle({ Name = 'Anti AFK', Value = Settings.Miscellaneous.AntiAFK, Callback = function(v) Settings.Miscellaneous.AntiAFK = v; InitAntiAFK(); SaveConfig() end })
-MiscSection:CreateToggle({ Name = 'Anti Kick', Value = Settings.Miscellaneous.AntiKick, Callback = function(v) Settings.Miscellaneous.AntiKick = v; if v then InitAntiKick() end; SaveConfig() end })
-MiscSection:CreateToggle({ Name = 'Free Cam', Value = false, Callback = function(v) FreecamEnabled = v; InitFreecam() end })
-local MiscTools = MiscTab:CreateSection({ Name = 'Tools', Side = 'Right' })
-MiscTools:CreateButton({ Name = 'Server Hop', Callback = ServerHop })
-MiscTools:CreateButton({ Name = 'Rejoin', Callback = Rejoin })
-MiscTools:CreateButton({ Name = 'Infinite Yield', Callback = function()
+MiscTab:AddToggle({ 'Click Teleport', Settings.Miscellaneous.ClickTP, function(v) Settings.Miscellaneous.ClickTP = v; UpdateClickTPConn(); SaveConfig() end })
+MiscTab:AddToggle({ 'Anti AFK', Settings.Miscellaneous.AntiAFK, function(v) Settings.Miscellaneous.AntiAFK = v; InitAntiAFK(); SaveConfig() end })
+MiscTab:AddToggle({ 'Anti Kick', Settings.Miscellaneous.AntiKick, function(v) Settings.Miscellaneous.AntiKick = v; if v then InitAntiKick() end; SaveConfig() end })
+MiscTab:AddToggle({ 'Free Cam', false, function(v) FreecamEnabled = v; InitFreecam() end })
+MiscTab:AddSection('Tools')
+MiscTab:AddButton({ 'Server Hop', ServerHop })
+MiscTab:AddButton({ 'Rejoin', Rejoin })
+MiscTab:AddButton({ 'Infinite Yield', function()
     loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infinite-yield/master/infinite-yield.lua'))()
 end })
-MiscTools:CreateButton({ Name = 'Dex Explorer', Callback = function()
+MiscTab:AddButton({ 'Dex Explorer', function()
     loadstring(game:HttpGet('https://raw.githubusercontent.com/LorekeeperZinnia/Dex/master/Dex.lua'))()
 end })
 
 -- Tab: Settings
-local SetTab = Window:CreateTab({ Name = 'Settings', Icon = 'cog' })
-local SetSection = SetTab:CreateSection({ Name = 'Configuration', Side = 'Left' })
-SetSection:CreateButton({ Name = 'Save Config', Callback = SaveConfig })
-SetSection:CreateButton({ Name = 'Load Config', Callback = LoadConfig })
-SetSection:CreateButton({ Name = 'Destroy Script', Callback = DestroyScript })
+local SetTab = Window:MakeTab({ 'Settings', 'rbxassetid://10709752996' })
+SetTab:AddSection('Configuration')
+SetTab:AddButton({ 'Save Config', SaveConfig })
+SetTab:AddButton({ 'Load Config', LoadConfig })
+SetTab:AddButton({ 'Destroy Script', DestroyScript })
+
+
 
 if Drawing then
     FOVCircle = CreateDrawing('Circle', {Thickness = 2, NumSides = 64, Radius = Settings.Combat.AimbotFOV, Filled = false, Visible = Settings.Combat.ShowFOV, Color = Color3.fromRGB(255, 255, 255), Transparency = 1})
@@ -801,8 +796,7 @@ end))
 table.insert(Connections, UserInputService.InputBegan:Connect(function(input, processed)
     if processed then return end
     if input.KeyCode == Enum.KeyCode.RightShift then
-        local gui = game.Players.LocalPlayer.PlayerGui:FindFirstChild('PhixBlox')
-        if gui then gui.Enabled = not gui.Enabled end
+        Window:MinimizeButton()
     end
     -- InfiniteJump: hook via StateChanged per-character (lebih reliable)
     if input.KeyCode == Enum.KeyCode.Space and Settings.Character.InfiniteJump and LocalPlayer.Character then
