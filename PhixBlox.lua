@@ -618,7 +618,7 @@ local function DestroyScript()
     -- Stop Freecam if active
     FreecamEnabled = false; pcall(function() RunService:UnbindFromRenderStep('PhixFreecam') end)
     -- Destroy PhixBlox GUI
-    local gui = game.Players.LocalPlayer.PlayerGui:FindFirstChild('Excusyz')
+    local gui = game.Players.LocalPlayer.PlayerGui:FindFirstChild('PhixBlox')
     if gui then gui:Destroy() end
     print('PhixBlox destroyed successfully')
 end
@@ -801,7 +801,7 @@ end))
 table.insert(Connections, UserInputService.InputBegan:Connect(function(input, processed)
     if processed then return end
     if input.KeyCode == Enum.KeyCode.RightShift then
-        local gui = game.Players.LocalPlayer.PlayerGui:FindFirstChild('Excusyz')
+        local gui = game.Players.LocalPlayer.PlayerGui:FindFirstChild('PhixBlox')
         if gui then gui.Enabled = not gui.Enabled end
     end
     -- InfiniteJump: hook via StateChanged per-character (lebih reliable)
