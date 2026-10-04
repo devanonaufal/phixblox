@@ -2568,7 +2568,7 @@ function Library:CreateWindow(info)
 				
 				local Title = info.Name or info.name or info.Title or info.title or info.Text or info.text or nil
 				local Placeholder = info.Placeholder or info.placeholder or "Place Your Text"
-				local Value = info.Value or info.Defuse or info.value or info.defuse or info.vu or info.df or nil
+				local Value = info.Value or info.Defuse or info.value or info.defuse or info.vu or info.df or ""
 				local Callback = info.Callback or info.callback or info.cb or function() end
 				
 				local TextBox = Instance.new("Frame")
